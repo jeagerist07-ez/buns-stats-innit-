@@ -1,0 +1,3299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VALORANT STATS - CHOOSE YOUR FATE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <style>
+        /* ========== BASE ========== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html,
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive;
+            color: #000;
+            text-align: center;
+            overflow-x: hidden;
+            cursor: default;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        /* ========== THEME VARIABLES (Sigma = default) ========== */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f0f0f0;
+            --text-secondary: #aaa;
+            --accent-1: #39ff14;
+            --accent-2: #bf00ff;
+            --accent-3: #ff00ff;
+            --accent-4: #ffff00;
+            --border-color: #ff00ff;
+            --shadow-color: rgba(255, 0, 255, 0.3);
+            --card-bg: rgba(20, 20, 20, 0.95);
+            --header-bg: rgba(255, 255, 0, 0.85);
+            --header-text: #ff0000;
+            --header-border: #ff0000;
+            --header-shadow: #0000ff;
+            --logo-anim: blink;
+            --marquee-bg: #000;
+            --marquee-text: #0f0;
+            --marquee-border: #ffff00;
+            --vanguard-bg: #ff0000;
+            --vanguard-anim: vgFlash;
+            --vanguard-bottom: #fff;
+            --ad-bg: #000;
+            --ad-text: #ffcc00;
+            --ad-border: #ffcc00;
+            --ad-anim: adPulse;
+            --tips-bg: rgba(0, 0, 0, 0.8);
+            --tips-text: #39ff14;
+            --tips-border: #bf00ff;
+            --profile-bg: rgba(0, 0, 0, 0.78);
+            --profile-border: #ff00ff;
+            --profile-style: double;
+            --profile-width: 5px;
+            --profile-shadow: 0 0 40px rgba(255, 0, 255, 0.3);
+            --input-bg: #fff;
+            --input-border: #0000ff;
+            --input-text: #000;
+            --btn-bg: #ff0000;
+            --btn-text: #ffff00;
+            --btn-border: #800000;
+            --btn-shadow: none;
+            --btn-radius: 0;
+            --status-bg: rgba(0, 0, 0, 0.6);
+            --status-text: #fff;
+            --status-border: transparent;
+            --avatar-border: #39ff14;
+            --level-badge-bg: #ffff00;
+            --level-badge-color: #000;
+            --level-badge-border: #ff0000;
+            --player-name: #39ff14;
+            --player-name-shadow: #ff00ff;
+            --player-tag: #bf00ff;
+            --rank-bg: #000;
+            --rank-border: #ff00ff;
+            --rank-border-style: dashed;
+            --rank-img-shadow: #39ff14;
+            --rank-text: #bf00ff;
+            --rank-text-shadow: #ff00ff;
+            --troll-rank: #ffff00;
+            --rr-color: #39ff14;
+            --peak-color: #ff00ff;
+            --sarcasm-bg: rgba(255, 0, 255, 0.2);
+            --sarcasm-border: #ff00ff;
+            --sarcasm-color: #ffff00;
+            --hero-bg: #1a1a1a;
+            --hero-border: #ff00ff;
+            --hero-shadow: 10px 10px 0 #ff00ff;
+            --hero-radius: 8px;
+            --hero-before-bg: #ffff00;
+            --hero-before-color: #000;
+            --hero-before-border: #ff0000;
+            --stat-bg: #000;
+            --stat-border: #39ff14;
+            --stat-value: #fff;
+            --stat-value-shadow: #bf00ff;
+            --stat-label: #39ff14;
+            --stat-roast-bg: rgba(0, 0, 0, 0.5);
+            --stat-roast-border: #ff00ff;
+            --stat-roast-color: #ffff00;
+            --verdict-bg: #000;
+            --verdict-border: #ff00ff;
+            --verdict-shadow: 0 0 40px rgba(255, 0, 255, 0.3);
+            --verdict-radius: 16px;
+            --verdict-title: #ffff00;
+            --verdict-title-shadow: 2px 2px 0 #ff00ff;
+            --verdict-score: #39ff14;
+            --verdict-body: #39ff14;
+            --section-bg: #bf00ff;
+            --section-text: #ffff00;
+            --section-shadow: 3px 3px 0 #ff00ff;
+            --section-border: #000;
+            --section-radius: 8px;
+            --match-bg: #1a1a1a;
+            --match-border-default: #fff;
+            --match-radius: 8px;
+            --win-border: #39ff14;
+            --win-shadow: #39ff14;
+            --win-bar: #39ff14;
+            --loss-border: #ff00ff;
+            --loss-shadow: #ff00ff;
+            --loss-bar: #ff00ff;
+            --agent-icon-border: #ffff00;
+            --match-info-p: #39ff14;
+            --match-roast: #ffff00;
+            --match-stats-bg: #000;
+            --mstat-val: #ffff00;
+            --mstat-lbl: #bf00ff;
+            --badge-bg: #ff00ff;
+            --badge-color: #000;
+            --badge-border: #000;
+            --badge-loss-bg: #ffff00;
+            --badge-loss-color: #000;
+            --side-card-bg: #1a1a1a;
+            --side-card-shadow: 5px 5px 0 #bf00ff;
+            --side-head: #ffff00;
+            --side-head-border: #fff;
+            --agent-row-border: #333;
+            --agent-mini-border: #39ff14;
+            --agent-name: #fff;
+            --agent-stats: #39ff14;
+            --agent-wr: #bf00ff;
+            --agent-roast: #ff00ff;
+            --chart-card-shadow: -5px 5px 0 #ff00ff;
+            --chart-head: #ff00ff;
+            --chart-accent: #39ff14;
+            --chart-accent2: #ff00ff;
+            --chart-grid: #333;
+            --jump-bg: #000;
+            --jump-text: #39ff14;
+            --jump-emoji-shadow: 0 0 40px #ff00ff;
+            --jump-text-shadow: 3px 3px 0 #ff00ff;
+            --modal-bg: rgba(0, 0, 0, 0.85);
+            --modal-border: #bf00ff;
+            --modal-shadow: 10px 10px 0 #ff00ff;
+            --modal-radius: 16px;
+            --modal-close-bg: #ff00ff;
+            --modal-close-shadow: 3px 3px 0 #39ff14;
+            --modal-header-h2: #ffff00;
+            --modal-header-h2-shadow: 2px 2px 0 #bf00ff;
+            --modal-header-p: #39ff14;
+            --modal-stat-border: #39ff14;
+            --team-you-bg: #39ff14;
+            --team-you-color: #000;
+            --team-them-bg: #ff00ff;
+            --team-them-color: #fff;
+            --team-label-border: #000;
+            --you-row-bg: rgba(57, 255, 20, 0.12);
+            --you-row-outline: #39ff14;
+            --you-suffix: '(YOU 🤡)';
+            --sb-th: #ffff00;
+            --sb-border: #39ff14;
+            --sb-td: #fff;
+            --sb-agent-border: #ffff00;
+            --ach-bg: rgba(0, 0, 0, 0.9);
+            --ach-text: #39ff14;
+            --ach-border: #ffff00;
+            --ach-shadow: 0 0 30px rgba(255, 255, 0, 0.3);
+            --chat-bg: rgba(0, 0, 0, 0.85);
+            --chat-text: #fff;
+            --chat-name: #39ff14;
+            --chat-border: #bf00ff;
+            --ban-bg: rgba(0, 0, 0, 0.92);
+            --ban-text: #ff0000;
+            --ban-sub: #39ff14;
+            --ban-dismiss-bg: #ff0000;
+            --ban-dismiss-border: #fff;
+            --miss-bg: #000;
+            --miss-text: #ffff00;
+            --miss-btn: #ff00ff;
+            --scrollbar-track: #1a1a1a;
+            --scrollbar-thumb: #ff00ff;
+            --loader-border: #ff00ff;
+            --loader-top: transparent;
+            --loader-color: #bf00ff;
+            --error-shadow: 2px 2px 0 #bf00ff;
+            --error-sub: #ffff00;
+            --status-color: #bf00ff;
+            --marquee-text-content: '★★★ WELCOME TO THE BEST VALORANT STATS TRACKER ★★★ 100% ACCURATE RANKS ★★★ NO BANS ★★★ CHEAT UNDETECTED ★★★ 我是一只猴子 ★★★';
+            --logo-text: 'VALORANTSTATS.NET (FREE GEMS!)';
+            --btn-text-content: 'CLICK FOR STATS!';
+            --btn-loading: 'LOADING...';
+            --ban-icon-emoji: '🚫';
+            --ban-reason: 'LACK OF SKILL 💀';
+            --section-title-content: '🔥 RECENT DISASTERS 🔥';
+            --side-title-content: '🤡 MAIN ABUSERS 🤡';
+            --chart-title: 'BURDEN SCORE GRAPH';
+            --chart-title-color: #ff00ff;
+            --trail-emojis: '💀','🤡','🗑️','👾','🎯','😈','🔥','💩';
+            --jump-emojis: '🤡','💀','👹','😈','👻','🎃';
+            --ach-emojis: '💀','🧠','🎯','📉','🤡','🗑️','😭','🚨','🪦','🔥','🎪','💔';
+            --monkey-emoji: '🐵';
+            --report-emoji: '🚨';
+        }
+
+        /* ========== HELLO KITTY THEME ========== */
+        body.theme-kitty {
+            --bg-primary: #fff0f5;
+            --bg-secondary: #ffe4e8;
+            --text-primary: #000;
+            --text-secondary: #333;
+            --accent-1: #ff69b4;
+            --accent-2: #e4002b;
+            --accent-3: #ffb6c1;
+            --accent-4: #ffd700;
+            --border-color: #ff69b4;
+            --shadow-color: rgba(255, 105, 180, 0.2);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --header-bg: rgba(255, 255, 255, 0.95);
+            --header-text: #e4002b;
+            --header-border: #e4002b;
+            --header-shadow: #ffb6c1;
+            --logo-anim: logoBounce;
+            --marquee-bg: #e4002b;
+            --marquee-text: #fff;
+            --marquee-border: #ffd700;
+            --vanguard-bg: #e4002b;
+            --vanguard-anim: vgPulse;
+            --vanguard-bottom: #ffd700;
+            --ad-bg: #ff69b4;
+            --ad-text: #fff;
+            --ad-border: #e4002b;
+            --ad-anim: adGlow;
+            --tips-bg: rgba(255, 255, 255, 0.95);
+            --tips-text: #e4002b;
+            --tips-border: #ff69b4;
+            --profile-bg: rgba(255, 255, 255, 0.95);
+            --profile-border: #ff69b4;
+            --profile-style: solid;
+            --profile-width: 4px;
+            --profile-shadow: 0 8px 32px rgba(255, 105, 180, 0.2);
+            --input-bg: #fff;
+            --input-border: #ff69b4;
+            --input-text: #333;
+            --btn-bg: #e4002b;
+            --btn-text: #fff;
+            --btn-border: #ff69b4;
+            --btn-shadow: 3px 3px 0 #ff69b4;
+            --btn-radius: 12px;
+            --status-bg: rgba(255, 255, 255, 0.9);
+            --status-text: #e4002b;
+            --status-border: #ffb6c1;
+            --avatar-border: #ff69b4;
+            --level-badge-bg: #ffd700;
+            --level-badge-color: #333;
+            --level-badge-border: #e4002b;
+            --player-name: #e4002b;
+            --player-name-shadow: #ff69b4;
+            --player-tag: #ff69b4;
+            --rank-bg: #fff;
+            --rank-border: #ff69b4;
+            --rank-border-style: dashed;
+            --rank-img-shadow: #ff69b4;
+            --rank-text: #e4002b;
+            --rank-text-shadow: #ff69b4;
+            --troll-rank: #ff69b4;
+            --rr-color: #e4002b;
+            --peak-color: #ff69b4;
+            --sarcasm-bg: rgba(255, 105, 180, 0.15);
+            --sarcasm-border: #ff69b4;
+            --sarcasm-color: #e4002b;
+            --hero-bg: #1a1a1a;
+            --hero-border: #ff69b4;
+            --hero-shadow: 8px 8px 0 #ffb6c1;
+            --hero-radius: 12px;
+            --hero-before-bg: #ffd700;
+            --hero-before-color: #333;
+            --hero-before-border: #e4002b;
+            --stat-bg: #fff;
+            --stat-border: #ff69b4;
+            --stat-value: #e4002b;
+            --stat-value-shadow: #ff69b4;
+            --stat-label: #ff69b4;
+            --stat-roast-bg: rgba(255, 105, 180, 0.1);
+            --stat-roast-border: #ff69b4;
+            --stat-roast-color: #e4002b;
+            --verdict-bg: #fff;
+            --verdict-border: #ff69b4;
+            --verdict-shadow: 0 0 30px rgba(255, 105, 180, 0.2);
+            --verdict-radius: 16px;
+            --verdict-title: #e4002b;
+            --verdict-title-shadow: 2px 2px 0 #ff69b4;
+            --verdict-score: #ff69b4;
+            --verdict-body: #e4002b;
+            --section-bg: #ff69b4;
+            --section-text: #fff;
+            --section-shadow: 3px 3px 0 #ff69b4;
+            --section-border: #e4002b;
+            --section-radius: 8px;
+            --match-bg: #1a1a1a;
+            --match-border-default: #ffb6c1;
+            --match-radius: 12px;
+            --win-border: #90ee90;
+            --win-shadow: #90ee90;
+            --win-bar: #90ee90;
+            --loss-border: #ff69b4;
+            --loss-shadow: #ff69b4;
+            --loss-bar: #ff69b4;
+            --agent-icon-border: #ffd700;
+            --match-info-p: #ff69b4;
+            --match-roast: #e4002b;
+            --match-stats-bg: rgba(255, 105, 180, 0.1);
+            --mstat-val: #e4002b;
+            --mstat-lbl: #ff69b4;
+            --badge-bg: #e4002b;
+            --badge-color: #fff;
+            --badge-border: #ff69b4;
+            --badge-loss-bg: #ffd700;
+            --badge-loss-color: #333;
+            --side-card-bg: #1a1a1a;
+            --side-card-shadow: 5px 5px 0 #ffb6c1;
+            --side-head: #e4002b;
+            --side-head-border: #ff69b4;
+            --agent-row-border: #333;
+            --agent-mini-border: #ff69b4;
+            --agent-name: #fff;
+            --agent-stats: #ff69b4;
+            --agent-wr: #e4002b;
+            --agent-roast: #ff69b4;
+            --chart-card-shadow: -5px 5px 0 #ff69b4;
+            --chart-head: #e4002b;
+            --chart-accent: #ffb6c1;
+            --chart-accent2: #e4002b;
+            --chart-grid: #ffc0cb;
+            --jump-bg: #fff;
+            --jump-text: #e4002b;
+            --jump-emoji-shadow: 0 0 40px #ff69b4;
+            --jump-text-shadow: 3px 3px 0 #ff69b4;
+            --modal-bg: rgba(255, 240, 245, 0.95);
+            --modal-border: #ff69b4;
+            --modal-shadow: 10px 10px 0 #ffb6c1;
+            --modal-radius: 16px;
+            --modal-close-bg: #e4002b;
+            --modal-close-shadow: 3px 3px 0 #ff69b4;
+            --modal-header-h2: #e4002b;
+            --modal-header-h2-shadow: 2px 2px 0 #ff69b4;
+            --modal-header-p: #ff69b4;
+            --modal-stat-border: #ff69b4;
+            --team-you-bg: #90ee90;
+            --team-you-color: #333;
+            --team-them-bg: #ff69b4;
+            --team-them-color: #fff;
+            --team-label-border: #ff69b4;
+            --you-row-bg: rgba(144, 238, 144, 0.15);
+            --you-row-outline: #90ee90;
+            --you-suffix: '(YOU 🐱)';
+            --sb-th: #e4002b;
+            --sb-border: #ff69b4;
+            --sb-td: #fff;
+            --sb-agent-border: #ffd700;
+            --ach-bg: rgba(255, 255, 255, 0.95);
+            --ach-text: #e4002b;
+            --ach-border: #ff69b4;
+            --ach-shadow: 0 4px 16px rgba(255, 105, 180, 0.3);
+            --chat-bg: rgba(255, 255, 255, 0.95);
+            --chat-text: #333;
+            --chat-name: #e4002b;
+            --chat-border: #ff69b4;
+            --ban-bg: rgba(255, 240, 245, 0.98);
+            --ban-text: #e4002b;
+            --ban-sub: #ff69b4;
+            --ban-dismiss-bg: #e4002b;
+            --ban-dismiss-border: #ff69b4;
+            --miss-bg: #fff;
+            --miss-text: #e4002b;
+            --miss-btn: #e4002b;
+            --scrollbar-track: #fff;
+            --scrollbar-thumb: #ff69b4;
+            --loader-border: #ff69b4;
+            --loader-top: #e4002b;
+            --loader-color: #ff69b4;
+            --error-shadow: 2px 2px 0 #ff69b4;
+            --error-sub: #ff69b4;
+            --status-color: #ff69b4;
+            --marquee-text-content: '★★★ WELCOME TO THE CUTEST VALORANT STATS TRACKER ★★★ 100% KAWAII ACCURATE ★★★ 🐱🎀💖🐱🎀💖🐱🎀💖';
+            --logo-text: '🐱 VALORANT STATS (Hello Kitty Edition) 🐱';
+            --btn-text-content: '🐱 CLICK FOR STATS! 🐱';
+            --btn-loading: '🐱 LOADING... 🐱';
+            --ban-icon-emoji: '🐱';
+            --ban-reason: 'LACK OF SKILL 💀';
+            --section-title-content: '🐱 RECENT DISASTERS 🐱';
+            --side-title-content: '🎀 MAIN ABUSERS 🎀';
+            --chart-title: 'BURDEN SCORE GRAPH';
+            --chart-title-color: #e4002b;
+            --trail-emojis: '🐱','🎀','💖','🌸','⭐','💎','💗','✨';
+            --jump-emojis: '🐱','🎀','💖','🌸','💀','🤡';
+            --ach-emojis: '🐱','🧠','🎀','📉','🤡','🗑️','😭','🚨','🪦','🔥','🌸','💔';
+            --monkey-emoji: '🐱';
+            --report-emoji: '🐱';
+        }
+
+        /* ========== GLOBAL STYLES ========== */
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* ========== SPLASH SCREEN ========== */
+        .splash-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: opacity 0.6s;
+        }
+        .splash-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .splash-bg-fx {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(255, 0, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, rgba(255, 0, 255, 0.08) 0%, transparent 50%);
+            animation: spPulse 4s ease-in-out infinite alternate;
+        }
+        @keyframes spPulse {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .splash-warning {
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(0.55rem, 1.5vw, 0.8rem);
+            color: #f00;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            animation: warnF 1.5s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            text-align: center;
+            line-height: 1.8;
+        }
+        @keyframes warnF {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px #f00; }
+            50% { opacity: 0.6; text-shadow: 0 0 20px #f00, 0 0 40px #f00; }
+        }
+        .splash-title {
+            font-family: 'Bangers', cursive;
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 0, 255, 0.5), 3px 3px 0 #f00;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 3px;
+        }
+        .splash-subtitle {
+            font-family: 'Comic Neue', cursive;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: #888;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 2;
+        }
+        .splash-choices {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+        .splash-card {
+            flex: 1;
+            min-width: 280px;
+            max-width: 400px;
+            border: 3px solid #333;
+            border-radius: 16px;
+            padding: 30px 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .splash-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .splash-card:hover::before {
+            opacity: 1;
+        }
+        .splash-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+        .splash-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+        .splash-card.sigma {
+            background: linear-gradient(180deg, #1a0000, #0a0a0a);
+            border-color: #f00;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2), inset 0 0 60px rgba(255, 0, 0, 0.05);
+        }
+        .splash-card.sigma::before {
+            background: radial-gradient(ellipse at center, rgba(255, 0, 0, 0.1) 0%, transparent 70%);
+        }
+        .splash-card.sigma:hover {
+            border-color: #f44;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.4), 0 10px 40px rgba(255, 0, 0, 0.3);
+        }
+        .splash-card.kitty {
+            background: linear-gradient(180deg, #fff0f5, #ffe4e8);
+            border-color: #ff69b4;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.2);
+        }
+        .splash-card.kitty::before {
+            background: radial-gradient(ellipse at center, rgba(255, 105, 180, 0.1) 0%, transparent 70%);
+        }
+        .splash-card.kitty:hover {
+            border-color: #ff8ec7;
+            box-shadow: 0 0 50px rgba(255, 105, 180, 0.4), 0 10px 40px rgba(255, 105, 180, 0.3);
+        }
+        .splash-card-emoji {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .splash-card-title {
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+        }
+        .sigma .splash-card-title {
+            color: #f00;
+            text-shadow: 2px 2px 0 #880000;
+        }
+        .kitty .splash-card-title {
+            color: #e4002b;
+            text-shadow: 2px 2px 0 #ffb6c1;
+        }
+        .splash-card-quote {
+            font-family: 'Comic Neue', cursive;
+            font-style: italic;
+            font-size: 0.95rem;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+        .sigma .splash-card-quote {
+            color: #f66;
+        }
+        .kitty .splash-card-quote {
+            color: #e4002b;
+        }
+        .splash-card-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .splash-card-features li {
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sigma .splash-card-features li {
+            color: #c00;
+        }
+        .kitty .splash-card-features li {
+            color: #c2185b;
+        }
+        .splash-card-features li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .sigma .splash-card-features li::before {
+            background: #f00;
+            box-shadow: 0 0 6px #f00;
+        }
+        .kitty .splash-card-features li::before {
+            background: #ff69b4;
+            box-shadow: 0 0 6px #ff69b4;
+        }
+        .splash-card-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            border: 3px solid;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 10px;
+        }
+        .sigma .splash-card-btn {
+            background: #f00;
+            color: #ff0;
+            border-color: #800000;
+            box-shadow: 4px 4px 0 #800;
+        }
+        .sigma .splash-card-btn:hover {
+            background: #f22;
+            box-shadow: 6px 6px 0 #800, 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+        .kitty .splash-card-btn {
+            background: #e4002b;
+            color: #fff;
+            border-color: #ff69b4;
+            box-shadow: 4px 4px 0 #ff69b4;
+        }
+        .kitty .splash-card-btn:hover {
+            background: #ff1a3d;
+            box-shadow: 6px 6px 0 #ff69b4, 0 0 20px rgba(255, 105, 180, 0.5);
+        }
+        .splash-card-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none !important;
+        }
+        .splash-card-warn {
+            font-size: 0.7rem;
+            margin-top: 10px;
+            opacity: 0.6;
+            font-weight: bold;
+        }
+        .sigma .splash-card-warn {
+            color: #f44;
+        }
+        .kitty .splash-card-warn {
+            color: #c2185b;
+        }
+        .splash-footer {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #444;
+            position: relative;
+            z-index: 2;
+        }
+        .splash-particle {
+            position: absolute;
+            font-size: 1.4rem;
+            opacity: 0;
+            animation: spPart 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes spPart {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            20% { opacity: 0.15; }
+            80% { opacity: 0.1; }
+            100% { opacity: 0; transform: translateY(-120px) scale(1.2) rotate(20deg); }
+        }
+        @media (max-width: 700px) {
+            .splash-choices {
+                flex-direction: column;
+                align-items: center;
+            }
+            .splash-card {
+                min-width: 0;
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+
+        /* ========== SIGMA BG ========== */
+        .sigma-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            animation: bgShift 0.5s ease infinite alternate;
+            background: linear-gradient(135deg, #ff0066, #ff6600, #ffcc00, #33cc33, #0066ff, #9933ff);
+            background-size: 600% 600%;
+            display: none;
+        }
+        .sigma-bg.active {
+            display: block;
+        }
+        @keyframes bgShift {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 50% 0%; }
+            50% { background-position: 100% 50%; }
+            75% { background-position: 50% 100%; }
+            100% { background-position: 0% 100%; }
+        }
+        .sigma-bg::after {
+            content: "🎮💀🔥🤡👾🎯💀🔥🤡👾🎯💀🔥🤡👾🎯";
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.08;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            animation: patSpin 20s linear infinite;
+            white-space: nowrap;
+            word-break: break-all;
+            line-height: 1.6;
+            letter-spacing: 2rem;
+        }
+        @keyframes patSpin {
+            0% { transform: rotate(0) scale(1); }
+            100% { transform: rotate(360deg) scale(1.2); }
+        }
+
+        /* ========== KITTY BG ========== */
+        .kitty-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffe4e8 25%, #ffd1dc 50%, #ffb6c1 75%, #ffc0cb 100%);
+            background-size: 400% 400%;
+            animation: softPink 12s ease-in-out infinite;
+            display: none;
+            overflow: hidden;
+        }
+        .kitty-bg.active {
+            display: block;
+        }
+        @keyframes softPink {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .hk-floaters {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+        .hk-floater {
+            position: absolute;
+            opacity: 0;
+            animation: hkIn 1s ease forwards;
+        }
+        @keyframes hkIn {
+            0% { opacity: 0; transform: scale(0.5) rotate(-20deg); }
+            100% { opacity: var(--hk-op, 0.15); transform: scale(1) rotate(var(--hk-rot, 0deg)); }
+        }
+        .hk-floater svg {
+            animation: hkBob var(--hk-dur, 6s) ease-in-out infinite;
+            animation-delay: var(--hk-del, 0s);
+            filter: drop-shadow(0 2px 8px rgba(255, 105, 180, 0.2));
+        }
+        @keyframes hkBob {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            25% { transform: translateY(-15px) rotate(3deg); }
+            75% { transform: translateY(10px) rotate(-2deg); }
+        }
+        .hk-particle {
+            position: absolute;
+            font-size: var(--p-sz, 20px);
+            opacity: 0;
+            animation: hkPF var(--p-dur, 8s) ease-in-out infinite;
+            animation-delay: var(--p-del, 0s);
+            pointer-events: none;
+        }
+        @keyframes hkPF {
+            0% { opacity: 0; transform: translateY(100vh) scale(0.5); }
+            10% { opacity: var(--p-op, 0.4); }
+            90% { opacity: var(--p-op, 0.4); }
+            100% { opacity: 0; transform: translateY(-100px) rotate(360deg) scale(1); }
+        }
+        .hk-stripes {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255, 182, 193, 0.08) 40px, rgba(255, 182, 193, 0.08) 42px);
+        }
+        .hk-bow-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(228, 0, 43, 0.06) 0%, transparent 20%),
+                radial-gradient(circle at 90% 30%, rgba(228, 0, 43, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 50% 80%, rgba(255, 105, 180, 0.04) 0%, transparent 30%),
+                radial-gradient(circle at 30% 60%, rgba(228, 0, 43, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 70% 10%, rgba(255, 105, 180, 0.06) 0%, transparent 22%);
+        }
+
+        /* ========== MAIN UI ========== */
+        .main-ui {
+            display: none;
+            position: relative;
+            z-index: 1;
+        }
+        .main-ui.active {
+            display: block;
+        }
+
+        /* ========== REUSABLE COMPONENTS ========== */
+        header {
+            padding: 16px 20px;
+            background: var(--header-bg);
+            border-bottom: 5px dashed var(--header-border);
+            position: relative;
+            z-index: 20;
+        }
+        .site-logo {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: bold;
+            color: var(--header-text);
+            text-shadow: 2px 2px var(--header-shadow);
+            cursor: pointer;
+            user-select: none;
+            font-family: "Bangers", cursive;
+            animation: var(--logo-anim) 2s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.3; }
+        }
+        @keyframes logoBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .marquee {
+            background: var(--marquee-bg);
+            color: var(--marquee-text);
+            font-size: 1.1rem;
+            padding: 4px;
+            font-family: monospace;
+            border-bottom: 2px solid var(--marquee-border);
+            position: relative;
+            z-index: 20;
+        }
+        .marquee marquee {
+            display: block;
+        }
+        .vanguard-banner {
+            background: var(--vanguard-bg);
+            color: #fff;
+            padding: 8px 12px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            z-index: 25;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-bottom: 3px solid var(--vanguard-bottom);
+            animation: var(--vanguard-anim) 2s ease-in-out infinite;
+        }
+        @keyframes vgFlash {
+            0% { background: #f00; color: #fff; text-shadow: 0 0 5px #fff; }
+            50% { background: #c00; color: #fcc; text-shadow: 0 0 20px #f00; }
+            100% { background: #f22; color: #ff0; text-shadow: 0 0 30px #ff00ff; }
+        }
+        @keyframes vgPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(228, 0, 43, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(255, 105, 180, 0.3); }
+        }
+        .ad-bar {
+            background: var(--ad-bg);
+            color: var(--ad-text);
+            padding: 6px 12px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 2px solid var(--ad-border);
+            position: relative;
+            z-index: 25;
+            letter-spacing: 2px;
+            animation: var(--ad-anim) 2s ease-in-out infinite;
+        }
+        @keyframes adPulse {
+            0% { text-shadow: 0 0 5px var(--ad-text); }
+            100% { text-shadow: 0 0 20px var(--ad-text), 0 0 40px var(--ad-text); }
+        }
+        @keyframes adGlow {
+            0%, 100% { background: var(--ad-bg); }
+            50% { background: var(--accent-3); }
+        }
+        .tips-bar {
+            background: var(--tips-bg);
+            color: var(--tips-text);
+            padding: 6px 12px;
+            font-family: 'Comic Neue', cursive;
+            font-size: 0.95rem;
+            text-align: center;
+            border-bottom: 2px solid var(--tips-border);
+            position: relative;
+            z-index: 25;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .tips-bar span {
+            animation: tipF 0.5s ease;
+        }
+        @keyframes tipF {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .controls {
+            margin-top: 16px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 20;
+        }
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .controls input,
+        .controls select {
+            background: var(--input-bg);
+            border: 3px solid var(--input-border);
+            color: var(--input-text);
+            padding: 10px 14px;
+            font-family: "Comic Sans MS", "Comic Neue", cursive;
+            font-size: 1.1rem;
+            font-weight: bold;
+            min-width: 120px;
+            border-radius: 8px;
+        }
+        .controls input::placeholder {
+            color: #aaa;
+            font-weight: normal;
+        }
+        #searchBtn {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: 4px solid var(--btn-border);
+            padding: 12px 28px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: "Bangers", cursive;
+            cursor: pointer;
+            position: relative;
+            z-index: 30;
+            letter-spacing: 1px;
+            border-radius: var(--btn-radius);
+            box-shadow: var(--btn-shadow);
+            transition: transform 0.1s;
+        }
+        #searchBtn:active {
+            transform: scale(0.96);
+        }
+        #searchBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        #searchBtn.static {
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
+            z-index: 30 !important;
+        }
+        .search-status {
+            font-size: 0.9rem;
+            color: var(--status-text);
+            background: var(--status-bg);
+            padding: 4px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 4px;
+            border: 2px solid var(--status-border);
+        }
+        #profileContent {
+            margin: 20px auto 50px;
+            width: 92%;
+            max-width: 1200px;
+            background: var(--profile-bg);
+            border: var(--profile-width) var(--profile-style) var(--profile-border);
+            padding: 20px;
+            border-radius: var(--verdict-radius);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 10;
+            min-height: 200px;
+            box-shadow: var(--profile-shadow);
+        }
+        #monkey {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            font-size: 4rem;
+            cursor: pointer;
+            z-index: 999;
+            transition: transform 0.15s;
+            user-select: none;
+            filter: drop-shadow(0 4px 12px var(--shadow-color));
+        }
+        #monkey:hover {
+            transform: scale(1.2) rotate(-8deg);
+        }
+        #reportSelfBtn {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 8px 16px;
+            font-family: 'Bangers', cursive;
+            font-size: 1rem;
+            border: 3px solid var(--btn-border);
+            cursor: pointer;
+            z-index: 998;
+            transform: rotate(3deg);
+            box-shadow: 3px 3px 0 var(--btn-border);
+            transition: transform 0.1s;
+            border-radius: var(--btn-radius);
+        }
+        #reportSelfBtn:active {
+            transform: rotate(0) translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        /* ========== CONTENT STYLES ========== */
+        .status-box {
+            text-align: center;
+            padding: 60px 20px;
+            font-family: 'Press Start 2P', cursive;
+            color: var(--status-color);
+        }
+        .status-box .loader {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--loader-border);
+            border-top-color: var(--loader-top);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .status-box .error-text {
+            color: var(--accent-2);
+            font-size: 24px;
+            text-shadow: var(--error-shadow);
+        }
+
+        .hero {
+            background: var(--hero-bg);
+            border: 3px solid var(--hero-border);
+            padding: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: var(--hero-shadow);
+            text-align: left;
+            border-radius: var(--hero-radius);
+        }
+        .hero::before {
+            content: "U MAD BRO?";
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            background: var(--hero-before-bg);
+            color: var(--hero-before-color);
+            padding: 5px 15px;
+            font-family: 'Bangers', cursive;
+            transform: rotate(5deg);
+            border: 2px solid var(--hero-before-border);
+            font-size: 18px;
+            z-index: 5;
+            border-radius: 6px;
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+        .hero-left {
+            text-align: center;
+        }
+        .avatar {
+            width: 150px;
+            height: 150px;
+            background: #fff;
+            border: 4px solid var(--avatar-border);
+            margin: 0 auto 10px;
+            overflow: hidden;
+            transform: rotate(-3deg);
+            border-radius: var(--hero-radius);
+        }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .level-badge {
+            background: var(--level-badge-bg);
+            color: var(--level-badge-color);
+            font-family: 'Bangers', cursive;
+            font-size: 18px;
+            padding: 2px 10px;
+            display: inline-block;
+            margin-top: -10px;
+            border: 2px solid var(--level-badge-border);
+            transform: rotate(2deg);
+            border-radius: 6px;
+        }
+        .player-name {
+            font-family: 'Bangers', cursive;
+            font-size: 32px;
+            color: var(--player-name);
+            text-shadow: 2px 2px 0 var(--player-name-shadow);
+            margin-top: 5px;
+        }
+        .player-tag {
+            color: var(--player-tag);
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .rank-display {
+            margin-top: 15px;
+            background: var(--rank-bg);
+            padding: 10px;
+            border: 2px var(--rank-border-style) var(--rank-border);
+            border-radius: 12px;
+        }
+        .rank-display img {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            display: block;
+            filter: drop-shadow(2px 2px 0 var(--rank-img-shadow));
+        }
+        .rank-name {
+            font-family: 'Bangers', cursive;
+            font-size: 24px;
+            color: var(--rank-text);
+            text-shadow: 1px 1px 0 var(--rank-text-shadow);
+        }
+        .troll-rank {
+            font-size: 14px;
+            color: var(--troll-rank);
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .rr-text {
+            color: var(--rr-color);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .peak-rank {
+            color: var(--peak-color);
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+        .sarcastic-comment {
+            margin-top: 10px;
+            background: var(--sarcasm-bg);
+            border: 1px dashed var(--sarcasm-border);
+            padding: 8px;
+            font-family: 'Comic Neue', cursive;
+            font-weight: bold;
+            color: var(--sarcasm-color);
+            font-size: 14px;
+            border-radius: 8px;
+        }
+        .hero-right {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            align-self: start;
+        }
+        .stat-card {
+            background: var(--stat-bg);
+            border: 2px solid var(--stat-border);
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.15s;
+            position: relative;
+            border-radius: var(--hero-radius);
+        }
+        .stat-card:hover {
+            transform: scale(1.05) rotate(1deg);
+            z-index: 10;
+            box-shadow: 0 4px 16px rgba(255, 105, 180, 0.3);
+        }
+        .stat-card:nth-child(2) {
+            border-color: var(--accent-2);
+            transform: rotate(-1deg);
+        }
+        .stat-card:nth-child(3) {
+            border-color: var(--accent-4);
+            transform: rotate(1deg);
+        }
+        .stat-card:nth-child(4) {
+            border-color: var(--accent-2);
+            transform: rotate(-2deg);
+        }
+        .stat-card:nth-child(5) {
+            border-color: var(--accent-1);
+            transform: rotate(2deg);
+        }
+        .stat-card:nth-child(6) {
+            border-color: var(--accent-2);
+            transform: rotate(-1deg);
+        }
+        .stat-value {
+            font-family: 'Bangers', cursive;
+            font-size: 36px;
+            color: var(--stat-value);
+            text-shadow: 2px 2px 0 var(--stat-value-shadow);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--stat-label);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .stat-roast {
+            font-size: 11px;
+            color: var(--stat-roast-color);
+            margin-top: 6px;
+            font-family: 'Comic Neue', cursive;
+            font-weight: bold;
+            background: var(--stat-roast-bg);
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+            border: 1px dashed var(--stat-roast-border);
+        }
+
+        .verdict-box {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--verdict-bg);
+            border: 4px double var(--verdict-border);
+            text-align: center;
+            position: relative;
+            box-shadow: var(--verdict-shadow);
+            border-radius: var(--verdict-radius);
+        }
+        .verdict-title {
+            font-family: 'Bangers', cursive;
+            font-size: 2.2rem;
+            color: var(--verdict-title);
+            text-shadow: var(--verdict-title-shadow);
+        }
+        .verdict-score {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            color: var(--verdict-score);
+            margin: 8px 0;
+        }
+        .verdict-roast {
+            font-family: 'Comic Neue', cursive;
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 8px 16px;
+            display: inline-block;
+            border-radius: 12px;
+            margin-top: 6px;
+        }
+        .verdict-roast.fire {
+            background: var(--accent-2);
+            color: #fff;
+        }
+        .verdict-roast.mid {
+            background: var(--accent-4);
+            color: #000;
+        }
+        .verdict-roast.good {
+            background: #90ee90;
+            color: #000;
+        }
+        .verdict-roast.sus {
+            background: var(--accent-3);
+            color: #fff;
+        }
+        .verdict-body {
+            font-family: 'Comic Neue', cursive;
+            color: var(--verdict-body);
+            margin-top: 8px;
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-family: 'Bangers', cursive;
+            font-size: 32px;
+            color: var(--section-text);
+            text-shadow: 3px 3px 0 var(--accent-2);
+            margin: 30px 0 15px;
+            display: inline-block;
+            background: var(--section-bg);
+            padding: 5px 15px;
+            transform: rotate(-1deg);
+            border: 2px solid var(--section-border);
+            border-radius: var(--section-radius);
+        }
+        .match-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .match {
+            background: var(--match-bg);
+            border: 3px solid var(--match-border-default);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+            overflow: hidden;
+            border-radius: var(--match-radius);
+        }
+        .match.win {
+            border-color: var(--win-border);
+            box-shadow: 6px 6px 0 var(--win-shadow);
+        }
+        .match.loss {
+            border-color: var(--loss-border);
+            box-shadow: 6px 6px 0 var(--loss-shadow);
+        }
+        .match:hover {
+            transform: translate(-3px, -3px);
+        }
+        .match.win:hover {
+            box-shadow: 9px 9px 0 var(--win-shadow);
+        }
+        .match.loss:hover {
+            box-shadow: 9px 9px 0 var(--loss-shadow);
+        }
+        .match:active {
+            transform: translate(1px, 1px);
+        }
+        .match.win:active {
+            box-shadow: 3px 3px 0 var(--win-shadow);
+        }
+        .match.loss:active {
+            box-shadow: 3px 3px 0 var(--loss-shadow);
+        }
+        .match-bar {
+            width: 100%;
+            height: 6px;
+            flex-shrink: 0;
+        }
+        .win .match-bar {
+            background: var(--win-bar);
+        }
+        .loss .match-bar {
+            background: var(--loss-bar);
+        }
+        .match-body {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+        .match-info {
+            padding: 18px 22px;
+            flex: 2;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-width: 200px;
+        }
+        .agent-icon {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--agent-icon-border);
+            overflow: hidden;
+            flex-shrink: 0;
+            border-radius: 8px;
+        }
+        .agent-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .match-details {
+            min-width: 0;
+            text-align: left;
+            flex: 1;
+        }
+        .match-details h3 {
+            font-family: 'Bangers', cursive;
+            font-size: 26px;
+            color: #fff;
+            line-height: 1.2;
+            letter-spacing: 0.5px;
+        }
+        .match-details p {
+            color: var(--match-info-p);
+            font-size: 14px;
+            font-weight: bold;
+            word-break: break-word;
+            margin-top: 3px;
+        }
+        .match-roast {
+            font-size: 12px;
+            color: var(--match-roast);
+            font-style: italic;
+            margin-top: 4px;
+        }
+        .click-hint {
+            font-size: 10px;
+            color: #888;
+            opacity: 0.7;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+        .loss .match-details h3 {
+            color: var(--loss-border);
+        }
+        .match-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 20px;
+            background: var(--match-stats-bg);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            flex: 1;
+            min-width: 160px;
+        }
+        .mstat {
+            text-align: center;
+            min-width: 40px;
+        }
+        .mstat-val {
+            font-family: 'Bangers', cursive;
+            font-size: 24px;
+            color: var(--mstat-val);
+        }
+        .mstat-lbl {
+            font-size: 10px;
+            color: var(--mstat-lbl);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .troll-badge {
+            position: absolute;
+            right: 14px;
+            top: -12px;
+            background: var(--badge-bg);
+            color: var(--badge-color);
+            padding: 3px 12px;
+            font-family: 'Bangers', cursive;
+            font-size: 14px;
+            transform: rotate(6deg);
+            border: 2px solid var(--badge-border);
+            z-index: 2;
+            white-space: nowrap;
+            border-radius: 6px;
+        }
+        .loss .troll-badge {
+            background: var(--badge-loss-bg);
+            color: var(--badge-loss-color);
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            text-align: left;
+        }
+        .side-card {
+            background: var(--side-card-bg);
+            border: 3px solid var(--stat-border);
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--side-card-shadow);
+            border-radius: var(--hero-radius);
+        }
+        .side-card:nth-child(2) {
+            border-color: var(--accent-2);
+        }
+        .side-head {
+            font-family: 'Bangers', cursive;
+            font-size: 24px;
+            color: var(--side-head);
+            border-bottom: 2px dashed var(--side-head-border);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .agent-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-bottom: 1px solid var(--agent-row-border);
+        }
+        .agent-row:last-child {
+            border-bottom: none;
+        }
+        .agent-mini {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--agent-mini-border);
+            flex-shrink: 0;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        .agent-mini img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .agent-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .agent-name {
+            font-weight: bold;
+            color: var(--agent-name);
+        }
+        .agent-stats {
+            font-size: 12px;
+            color: var(--agent-stats);
+        }
+        .agent-wr {
+            font-family: 'Bangers', cursive;
+            font-size: 18px;
+            color: var(--agent-wr);
+            flex-shrink: 0;
+        }
+        .agent-roast {
+            font-size: 10px;
+            color: var(--agent-roast);
+            font-style: italic;
+            margin-top: 2px;
+            opacity: 0.8;
+        }
+        .chart-card {
+            background: var(--side-card-bg);
+            border: 3px solid var(--accent-4);
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: var(--chart-card-shadow);
+            border-radius: var(--hero-radius);
+        }
+        .chart-head {
+            font-family: 'Bangers', cursive;
+            font-size: 24px;
+            color: var(--chart-head);
+            border-bottom: 2px dashed var(--side-head-border);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .chart-wrap {
+            height: 280px;
+            position: relative;
+        }
+        .chart-wrap canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ========== JUMBSCARE ========== */
+        .jumpscare-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--jump-bg);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            animation: jsFlash 0.7s ease-out forwards;
+        }
+        .jumpscare-emoji {
+            font-size: 50vmin;
+            line-height: 1;
+            filter: drop-shadow(0 0 40px var(--jump-emoji-shadow));
+            animation: jsPunch 0.7s cubic-bezier(0.2, 1.6, 0.4, 1) forwards;
+        }
+        .jumpscare-text {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Bangers', cursive;
+            font-size: clamp(28px, 6vw, 64px);
+            color: var(--jump-text);
+            text-shadow: var(--jump-text-shadow);
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+        @keyframes jsFlash {
+            0% { background: var(--accent-3); }
+            8% { background: var(--jump-bg); }
+            100% { background: var(--jump-bg); }
+        }
+        @keyframes jsPunch {
+            0% { transform: scale(0.2) rotate(-8deg); opacity: 0; }
+            35% { transform: scale(1.15) rotate(4deg); opacity: 1; }
+            55% { transform: scale(0.95) rotate(-2deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .jumpscare-overlay,
+            .jumpscare-emoji {
+                animation: none !important;
+            }
+        }
+
+        /* ========== MODAL ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--modal-bg);
+            z-index: 999;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 40px 16px;
+            backdrop-filter: blur(8px);
+        }
+        .match-modal {
+            background: var(--hero-bg);
+            border: 4px solid var(--modal-border);
+            box-shadow: var(--modal-shadow);
+            max-width: 800px;
+            width: 100%;
+            margin: auto;
+            padding: 24px;
+            position: relative;
+            text-align: left;
+            border-radius: var(--modal-radius);
+        }
+        .modal-close {
+            position: absolute;
+            top: -18px;
+            right: -18px;
+            width: 40px;
+            height: 40px;
+            background: var(--modal-close-bg);
+            color: #fff;
+            border: 3px solid #000;
+            font-family: 'Bangers', cursive;
+            font-size: 22px;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: var(--modal-close-shadow);
+        }
+        .modal-close:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed var(--modal-stat-border);
+            padding-bottom: 16px;
+        }
+        .modal-header h2 {
+            font-family: 'Bangers', cursive;
+            font-size: 34px;
+            color: var(--modal-header-h2);
+            text-shadow: var(--modal-header-h2-shadow);
+        }
+        .modal-header p {
+            color: var(--modal-header-p);
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 6px;
+        }
+        .scoreboard-team {
+            margin-bottom: 18px;
+        }
+        .scoreboard-team-label {
+            font-family: 'Bangers', cursive;
+            font-size: 18px;
+            padding: 4px 10px;
+            display: inline-block;
+            margin-bottom: 8px;
+            border: 2px solid var(--team-label-border);
+            border-radius: 6px;
+        }
+        .scoreboard-team-label.you {
+            background: var(--team-you-bg);
+            color: var(--team-you-color);
+        }
+        .scoreboard-team-label.them {
+            background: var(--team-them-bg);
+            color: var(--team-them-color);
+        }
+        .scoreboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .scoreboard-table th {
+            text-align: left;
+            color: var(--sb-th);
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 6px 8px;
+            border-bottom: 2px solid var(--sb-border);
+        }
+        .scoreboard-table td {
+            padding: 8px;
+            border-bottom: 1px solid #2a2a2a;
+            color: var(--sb-td);
+            vertical-align: middle;
+        }
+        .scoreboard-table tr.is-you {
+            background: var(--you-row-bg);
+            outline: 2px solid var(--you-row-outline);
+            outline-offset: -2px;
+        }
+        .scoreboard-table tr.is-you td:first-child .sb-player-name::after {
+            content: " " attr(data-suffix);
+            color: var(--accent-3);
+            font-weight: bold;
+        }
+        .sb-player {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sb-player-name {
+            font-weight: bold;
+        }
+        .sb-agent-icon {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--sb-agent-border);
+            flex-shrink: 0;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+        .sb-agent-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .modal-stat-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .modal-stat-strip .stat-card {
+            padding: 10px;
+        }
+        .modal-stat-strip .stat-value {
+            font-size: 24px;
+        }
+
+        /* ========== ACHIEVEMENTS ========== */
+        .achievement-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .achievement {
+            background: var(--ach-bg);
+            border: 3px solid var(--ach-border);
+            padding: 10px 20px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.1rem;
+            color: var(--ach-text);
+            animation: achSlide 0.6s ease forwards;
+            box-shadow: var(--ach-shadow);
+            pointer-events: auto;
+            cursor: default;
+            white-space: nowrap;
+            border-radius: 10px;
+        }
+        .achievement .ach-emoji {
+            font-size: 1.6rem;
+            margin-right: 10px;
+        }
+        @keyframes achSlide {
+            0% { transform: translateX(120%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        .achievement.fade-out {
+            animation: achFade 0.5s ease forwards;
+        }
+        @keyframes achFade {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(120%); opacity: 0; }
+        }
+
+        /* ========== CHAT ========== */
+        .chat-overlay {
+            position: fixed;
+            bottom: 120px;
+            left: 16px;
+            z-index: 300;
+            background: var(--chat-bg);
+            border: 2px solid var(--chat-border);
+            padding: 8px 14px;
+            font-family: 'Comic Neue', cursive;
+            font-size: 0.85rem;
+            color: var(--chat-text);
+            max-width: 280px;
+            border-radius: 10px;
+            animation: chatF 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+        }
+        .chat-overlay .chat-name {
+            color: var(--chat-name);
+            font-weight: bold;
+        }
+        @keyframes chatF {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== BAN ========== */
+        .ban-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--ban-bg);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .ban-overlay .ban-icon {
+            font-size: 8rem;
+            animation: banSpin 2s linear infinite;
+        }
+        .ban-overlay .ban-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.2rem;
+            color: var(--ban-text);
+            text-shadow: 0 0 20px var(--accent-1);
+            margin-top: 20px;
+        }
+        .ban-overlay .ban-sub {
+            font-family: 'Comic Neue', cursive;
+            font-size: 1.2rem;
+            color: var(--ban-sub);
+            margin-top: 10px;
+        }
+        .ban-overlay .ban-dismiss {
+            margin-top: 30px;
+            padding: 12px 30px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.2rem;
+            background: var(--ban-dismiss-bg);
+            color: #fff;
+            border: 3px solid var(--ban-dismiss-border);
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        @keyframes banSpin {
+            0% { transform: rotate(0) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* ========== MISS POPUP ========== */
+        .miss-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--miss-bg);
+            border: 5px solid var(--accent-3);
+            padding: 30px 40px;
+            z-index: 9999;
+            text-align: center;
+            color: var(--miss-text);
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+            border-radius: 20px;
+            max-width: 90%;
+        }
+        .miss-popup button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-family: 'Bangers', cursive;
+            font-size: 1.5rem;
+            background: var(--miss-btn);
+            border: 3px solid #000;
+            cursor: pointer;
+            color: #fff;
+            border-radius: 10px;
+        }
+        .miss-popup button:active {
+            transform: scale(0.95);
+        }
+
+        /* ========== TRAIL ========== */
+        .trail-emoji {
+            position: fixed;
+            pointer-events: none;
+            font-size: 1.6rem;
+            z-index: 99999;
+            opacity: 0.8;
+            animation: trailF 0.8s ease forwards;
+        }
+        @keyframes trailF {
+            0% { opacity: 0.9; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.3) rotate(360deg) translateY(-40px); }
+        }
+
+        .shake {
+            animation: screenShake 0.3s ease;
+        }
+        @keyframes screenShake {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-8px, 6px) rotate(-1deg); }
+            40% { transform: translate(7px, -5px) rotate(1deg); }
+            60% { transform: translate(-5px, 4px) rotate(-0.5deg); }
+            80% { transform: translate(4px, -3px) rotate(0.5deg); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border: 2px solid #000;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-2);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-right {
+                grid-template-columns: 1fr 1fr;
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .match-body {
+                flex-direction: column;
+            }
+            .match-stats {
+                justify-content: space-around;
+            }
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .controls input,
+            .controls select {
+                width: 100%;
+                min-width: unset;
+            }
+            .achievement {
+                font-size: 0.9rem;
+                padding: 6px 14px;
+            }
+            .chat-overlay {
+                max-width: 200px;
+                font-size: 0.75rem;
+                bottom: 100px;
+                left: 8px;
+            }
+            .ban-overlay .ban-title {
+                font-size: 1.4rem;
+            }
+            .ban-overlay .ban-icon {
+                font-size: 5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .stat-value {
+                font-size: 26px;
+            }
+            .match-details h3 {
+                font-size: 18px;
+            }
+            .modal-stat-strip {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .scoreboard-table {
+                font-size: 11px;
+            }
+            .troll-badge {
+                font-size: 11px;
+                padding: 2px 8px;
+                right: 8px;
+                top: -10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SPLASH SCREEN ========== -->
+    <div class="splash-overlay" id="splashOverlay">
+        <div class="splash-bg-fx"></div>
+        <div id="splashParticles"></div>
+        <div class="splash-warning">⚠️ WARNING: THIS WEBSITE CONTAINS PSYCHOLOGICAL WARFARE ⚠️<br>PROCEED AT YOUR OWN RISK</div>
+        <div class="splash-title">CHOOSE YOUR FATE</div>
+        <div class="splash-subtitle">There is no going back.</div>
+        <div class="splash-choices">
+            <div class="splash-card sigma" id="sigmaBtn" role="button" tabindex="0">
+                <span class="splash-card-emoji">💀🔥👹</span>
+                <div class="splash-card-title">SIGMA ROUTE</div>
+                <div class="splash-card-quote">"I eat raw onions for breakfast. Fear is a construct."</div>
+                <ul class="splash-card-features">
+                    <li>Flashing rainbow seizure background</li>
+                    <li>Maximal psychological damage</li>
+                    <li>Loud jumpscare sounds</li>
+                    <li>No mercy, no apologies</li>
+                    <li>Your eyes will bleed</li>
+                </ul>
+                <button class="splash-card-btn">PROCEED IF YOU DARE</button>
+                <div class="splash-card-warn">* Not responsible for seizures, PTSD, or broken monitors</div>
+            </div>
+            <div class="splash-card kitty" id="kittyBtn" role="button" tabindex="0">
+                <span class="splash-card-emoji">🐱🎀💖</span>
+                <div class="splash-card-title">HELLO KITTY ROUTE</div>
+                <div class="splash-card-quote">"I need emotional support to look at my stats."</div>
+                <ul class="splash-card-features">
+                    <li>Soft pink pastel background</li>
+                    <li>Floating Hello Kitty faces</li>
+                    <li>Gentle hearts and ribbons</li>
+                    <li>Still roasts you to oblivion</li>
+                    <li>But with love and care</li>
+                </ul>
+                <button class="splash-card-btn">SAFE SPACE AHEAD</button>
+                <div class="splash-card-warn">* Still contains sarcasm, may cause mild emotional damage</div>
+            </div>
+        </div>
+        <div class="splash-footer">VALORANT STATS — 100% REAL NO FAKE — 2024</div>
+    </div>
+
+    <!-- ========== BACKGROUNDS ========== -->
+    <div class="sigma-bg" id="sigmaBg"></div>
+    <div class="kitty-bg" id="kittyBg">
+        <div class="hk-stripes"></div>
+        <div class="hk-bow-pattern"></div>
+        <div class="hk-floaters" id="hkFloaters"></div>
+        <div id="hkParticles"></div>
+    </div>
+
+    <!-- ========== MAIN UI ========== -->
+    <div class="main-ui" id="mainUI">
+        <div class="vanguard-banner" id="vanguardBanner">⚠️ VANGUARD ANTI-CHEAT: ACCOUNT UNDER INVESTIGATION ⚠️</div>
+        <div class="ad-bar" id="adBar">💰 FREE VP — CLICK HERE FOR 10000 VALORANT POINTS 💰</div>
+        <div class="tips-bar" id="tipsBar"><span>💡 PRO TIP: Don't suck at the game</span></div>
+        <div id="chatOverlay" class="chat-overlay" style="display:none;"><span class="chat-name">JettDiff:</span> <span class="chat-msg">wow this player is actually terrible</span></div>
+        <div class="achievement-container" id="achievementContainer"></div>
+        <header id="header"><div class="site-logo" id="siteLogo">VALORANT STATS</div></header>
+        <div class="marquee"><marquee behavior="scroll" direction="left" id="marqueeText">★★★ WELCOME TO THE BEST VALORANT STATS TRACKER ★★★</marquee></div>
+        <div class="controls">
+            <div class="controls-row">
+                <input type="text" id="searchInput" placeholder="Name#TAG" value="TenZ#NA1" />
+                <select id="regionSelect"><option value="na">NA</option><option value="eu">EU</option><option value="ap" selected>AP</option><option value="kr">KR</option></select>
+                <button id="searchBtn">CLICK FOR STATS!</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;justify-content:center;margin-top:4px;">
+                <span class="search-status" id="statusMsg">🔍 ready</span>
+                <span class="search-status">⚡ COMP ONLY · CURRENT ACT</span>
+            </div>
+        </div>
+        <div id="profileContent"><div class="status-box"><div class="loader"></div><p>Waiting for you to choose...</p></div></div>
+        <button id="reportSelfBtn">🚨 REPORT SELF 🚨</button>
+        <div id="monkey">🐵</div>
+        <div id="missPopup" class="miss-popup" style="display:none;"><div>😹 nicee aimm aimlabs is free 😹</div><button id="popupOkBtn">OK, I'LL CLICK NOW</button></div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ======== SPLASH PARTICLES ========
+            const sp = document.getElementById('splashParticles');
+            const spE = ['💀', '🔥', '🐱', '🎀', '👹', '💖', '⚡', '🌸', '🤡', '✨'];
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'splash-particle';
+                p.textContent = spE[i % spE.length];
+                p.style.left = Math.random() * 95 + '%';
+                p.style.top = (20 + Math.random() * 70) + '%';
+                p.style.animationDelay = Math.random() * 6 + 's';
+                p.style.animationDuration = (5 + Math.random() * 5) + 's';
+                p.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+                sp.appendChild(p);
+            }
+
+            // ======== THEME STATE ========
+            let currentTheme = null; // 'sigma' or 'kitty'
+
+            // ======== KITTY BG GENERATOR ========
+            function genKittyBg() {
+                const fl = document.getElementById('hkFloaters');
+                const pa = document.getElementById('hkParticles');
+                fl.innerHTML = '';
+                pa.innerHTML = '';
+
+                function hkS(s) {
+                    return `<svg width="${s}" height="${s*0.85}" viewBox="0 0 120 100" fill="none"><path d="M30 35L20 10L45 28Z" fill="#fff" stroke="#333" stroke-width="2.5"/><path d="M90 35L100 10L75 28Z" fill="#fff" stroke="#333" stroke-width="2.5"/><ellipse cx="60" cy="52" rx="38" ry="35" fill="#fff" stroke="#333" stroke-width="2.5"/><ellipse cx="47" cy="48" rx="3.5" ry="4.5" fill="#333"/><ellipse cx="73" cy="48" rx="3.5" ry="4.5" fill="#333"/><ellipse cx="60" cy="56" rx="3" ry="2.2" fill="#ffd700"/><line x1="10" y1="50" x2="42" y2="54" stroke="#333" stroke-width="1.8"/><line x1="12" y1="58" x2="42" y2="58" stroke="#333" stroke-width="1.8"/><line x1="10" y1="66" x2="42" y2="62" stroke="#333" stroke-width="1.8"/><line x1="110" y1="50" x2="78" y2="54" stroke="#333" stroke-width="1.8"/><line x1="108" y1="58" x2="78" y2="58" stroke="#333" stroke-width="1.8"/><line x1="110" y1="66" x2="78" y2="62" stroke="#333" stroke-width="1.8"/><ellipse cx="82" cy="28" rx="10" ry="7" fill="#e4002b" stroke="#b0001f" stroke-width="1.5" transform="rotate(-20 82 28)"/><ellipse cx="96" cy="32" rx="10" ry="7" fill="#e4002b" stroke="#b0001f" stroke-width="1.5" transform="rotate(20 96 32)"/><circle cx="89" cy="30" r="4" fill="#ff1744" stroke="#b0001f" stroke-width="1.5"/></svg>`;
+                }
+
+                function bowS(s) {
+                    return `<svg width="${s}" height="${s*0.6}" viewBox="0 0 60 36" fill="none"><ellipse cx="20" cy="18" rx="18" ry="14" fill="#e4002b" stroke="#b0001f" stroke-width="2" transform="rotate(-15 20 18)"/><ellipse cx="40" cy="18" rx="18" ry="14" fill="#e4002b" stroke="#b0001f" stroke-width="2" transform="rotate(15 40 18)"/><circle cx="30" cy="18" r="6" fill="#ff1744" stroke="#b0001f" stroke-width="2"/></svg>`;
+                }
+
+                for (let i = 0; i < 8; i++) {
+                    const f = document.createElement('div');
+                    f.className = 'hk-floater';
+                    const sz = 40 + Math.random() * 60;
+                    f.style.cssText =
+                        `left:${Math.random()*90}%;top:${Math.random()*85}%;--hk-op:${0.08+Math.random()*0.12};--hk-rot:${-15+Math.random()*30}deg;--hk-dur:${5+Math.random()*5}s;--hk-del:${Math.random()*3}s;`;
+                    f.innerHTML = i % 3 === 0 ? bowS(sz * 0.5) : hkS(sz);
+                    fl.appendChild(f);
+                }
+                const pe = ['💖', '💕', '🎀', '🌸', '⭐', '✨', '💎', '💗'];
+                for (let i = 0; i < 20; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'hk-particle';
+                    p.style.cssText =
+                        `left:${Math.random()*95}%;--p-sz:${14+Math.random()*20}px;--p-dur:${10+Math.random()*15}s;--p-del:${Math.random()*20}s;--p-op:${0.2+Math.random()*0.3};`;
+                    p.textContent = pe[Math.floor(Math.random() * pe.length)];
+                    pa.appendChild(p);
+                }
+            }
+
+            // ======== THEME SELECTION ========
+            function chooseTheme(t) {
+                currentTheme = t;
+                document.getElementById('splashOverlay').classList.add('hidden');
+                document.getElementById('mainUI').classList.add('active');
+
+                // Set body class for theme
+                document.body.classList.remove('theme-kitty');
+                if (t === 'sigma') {
+                    document.getElementById('sigmaBg').classList.add('active');
+                    document.getElementById('kittyBg').classList.remove('active');
+                    startSigmaBgShift();
+                } else {
+                    document.body.classList.add('theme-kitty');
+                    document.getElementById('kittyBg').classList.add('active');
+                    document.getElementById('sigmaBg').classList.remove('active');
+                    genKittyBg();
+                }
+
+                // Update text elements
+                const isKitty = (t === 'kitty');
+                const logo = document.getElementById('siteLogo');
+                const marquee = document.getElementById('marqueeText');
+                const searchBtn = document.getElementById('searchBtn');
+                const monkey = document.getElementById('monkey');
+                const reportBtn = document.getElementById('reportSelfBtn');
+                const vanguard = document.getElementById('vanguardBanner');
+                const ad = document.getElementById('adBar');
+
+                if (isKitty) {
+                    logo.textContent = '🐱 VALORANT STATS (Hello Kitty Edition) 🐱';
+                    marquee.innerHTML =
+                    '★★★ WELCOME TO THE CUTEST VALORANT STATS TRACKER ★★★ 100% KAWAII ACCURATE ★★★ 🐱🎀💖🐱🎀💖🐱🎀💖';
+                    searchBtn.textContent = '🐱 CLICK FOR STATS! 🐱';
+                    monkey.textContent = '🐱';
+                    reportBtn.innerHTML = '🐱 REPORT SELF 🐱';
+                    vanguard.textContent = '🌸 KITTY GUARD: ACCOUNT APPROVED 🌸';
+                    ad.textContent = '🎀 FREE VP — CLICK FOR 10000 VALORANT POINTS 🎀';
+                } else {
+                    logo.textContent = 'VALORANTSTATS.NET (FREE GEMS!)';
+                    marquee.innerHTML =
+                        '★★★ WELCOME TO THE BEST VALORANT STATS TRACKER ★★★ 100% ACCURATE RANKS ★★★ NO BANS ★★★ CHEAT UNDETECTED ★★★ 我是一只猴子 ★★★';
+                    searchBtn.textContent = 'CLICK FOR STATS!';
+                    monkey.textContent = '🐵';
+                    reportBtn.innerHTML = '🚨 REPORT SELF 🚨';
+                    vanguard.textContent = '⚠️ VANGUARD ANTI-CHEAT: ACCOUNT UNDER INVESTIGATION ⚠️';
+                    ad.textContent = '💰 FREE VP — CLICK HERE FOR 10000 VALORANT POINTS 💰';
+                }
+
+                // Auto-search after theme selection
+                setTimeout(() => {
+                    if (lastAccount) {
+                        renderProfile();
+                    } else {
+                        fetchData();
+                    }
+                }, 400);
+            }
+
+            let sigmaInterval = null;
+
+            function startSigmaBgShift() {
+                const bg = document.getElementById('sigmaBg');
+                const h = ['#ff0066', '#ff6600', '#ffcc00', '#33cc33', '#0066ff', '#9933ff', '#ff00ff', '#00ffcc'];
+                if (sigmaInterval) clearInterval(sigmaInterval);
+                sigmaInterval = setInterval(() => {
+                    if (currentTheme !== 'sigma') { clearInterval(sigmaInterval); return; }
+                    bg.style.background =
+                        `linear-gradient(135deg, ${h[Math.floor(Math.random()*h.length)]}, ${h[Math.floor(Math.random()*h.length)]}, ${h[Math.floor(Math.random()*h.length)]}, ${h[Math.floor(Math.random()*h.length)]})`;
+                    bg.style.backgroundSize = '600% 600%';
+                }, 3000);
+            }
+
+            document.getElementById('sigmaBtn').addEventListener('click', () => chooseTheme('sigma'));
+            document.getElementById('kittyBtn').addEventListener('click', () => chooseTheme('kitty'));
+            document.getElementById('sigmaBtn').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e
+                        .preventDefault();
+                    chooseTheme('sigma'); } });
+            document.getElementById('kittyBtn').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e
+                        .preventDefault();
+                    chooseTheme('kitty'); } });
+
+            // ======== API & TRACKER LOGIC (copied from original) ========
+            const AB = 'https://api.henrikdev.xyz/valorant';
+            const AK = 'HDEV-22b27376-cdbd-40df-8225-1e1ca84d2c44';
+
+            const searchBtn = document.getElementById('searchBtn');
+            const searchInput = document.getElementById('searchInput');
+            const regionSelect = document.getElementById('regionSelect');
+            const profileContent = document.getElementById('profileContent');
+            const statusMsg = document.getElementById('statusMsg');
+            const missPopup = document.getElementById('missPopup');
+            const popupOkBtn = document.getElementById('popupOkBtn');
+            const vanguardBanner = document.getElementById('vanguardBanner');
+            const adBar = document.getElementById('adBar');
+            const tipsBar = document.getElementById('tipsBar');
+            const chatOverlay = document.getElementById('chatOverlay');
+            const achievementContainer = document.getElementById('achievementContainer');
+            const reportSelfBtn = document.getElementById('reportSelfBtn');
+
+            let perfChart = null;
+            let lastAccount = null;
+            let lastMmr = null;
+            let lastMatchesAll = [];
+            let lastDisplayMatches = [];
+            let lastName = '';
+            let lastTag = '';
+            let lastActiveRegion = '';
+            let lastIsPrivate = false;
+            let currentPlayerData = null;
+            let missCount = 0;
+            let isStatic = false;
+            let tipIdx = 0;
+
+            const TIPS = [
+                "💡 PRO TIP: Don't suck at the game",
+                "💡 PRO TIP: Aim at the enemies, not your teammates",
+                "💡 PRO TIP: Uninstall if you're below Gold",
+                "💡 PRO TIP: Your rank is a reflection of your soul",
+                "💡 PRO TIP: Try using your monitor next time",
+                "💡 PRO TIP: Jett dash doesn't fix bad aim",
+                "💡 PRO TIP: Your mom called, she wants her PC back",
+                "💡 PRO TIP: The enemy team is not your friend",
+                "💡 PRO TIP: Buy a better gaming chair",
+                "💡 PRO TIP: Maybe Valorant isn't for you",
+                "💡 PRO TIP: 0-10 is not a good look",
+                "💡 PRO TIP: The spike goes in the green thing",
+                "💡 PRO TIP: You're the reason we can't have nice things",
+                "💡 PRO TIP: Your KD is lower than your GPA",
+                "💡 PRO TIP: Please touch grass after this game",
+                "💡 PRO TIP: The minimap exists for a reason",
+                "💡 PRO TIP: Your sensitivity is too high (and your IQ too low)",
+                "💡 PRO TIP: That was a 1v5, you're not that guy",
+                "💡 PRO TIP: Your teammates are not your enemies (usually)"
+            ];
+
+            const CHATS = [
+                { n: "JettDiff", m: "wow this player is actually terrible" },
+                { n: "SageMain", m: "heal diff? more like skill diff" },
+                { n: "ReynaOneTrick", m: "0 kills? are you okay?" },
+                { n: "ChamberMain", m: "still playing chamber in 2024?" },
+                { n: "PhoenixUlt", m: "this guy is actually griefing" },
+                { n: "ViperMain", m: "your aim is worse than my grandma's" },
+                { n: "SkyeDog", m: "bro thinks he's TenZ" },
+                { n: "YoruMain", m: "why are you even in this lobby" },
+                { n: "Brimstone", m: "I've seen better aim in a wheelchair" },
+                { n: "CypherMain", m: "enemy team is farming you" },
+                { n: "KayoMain", m: "0 impact, 0 kills, 0 brain cells" },
+                { n: "RazeMain", m: "you're the reason we lost" }
+            ];
+
+            // Roasts and helpers (same as original)
+            const KD_R = [{ t: .3, m: ["Bro you're literally feeding", "0.3 K/D? Are you throwing?",
+                    "Negative impact: the player"
+                ] }, { t: .6, m: ["You're just donating at this point", "K/D so low it's underground",
+                    "Enemy team loves you (free kills)"
+                ] }, { t: .9, m: ["Barely positive, barely alive", "1.0 K/D is the average of a bot",
+                    "You exist, that's about it"
+                ] }, { t: 1.2, m: ["Average at best, like your life", "Decent but still mid",
+                    "You're okay I guess (derogatory)"
+                ] }, { t: 1.6, m: ["Okay I see you (slightly)", "Not terrible, not great",
+                    "You're improving (still bad though)"
+                ] }, { t: 999, m: ["Sweaty tryhard detected", "Touch grass challenge: impossible",
+                    "Your K/D is suspiciously high"
+                ] }];
+            const ACS_R = [{ t: 100, m: ["Bot aim detected", "ACS lower than my IQ", "Just uninstall already"] },
+            { t: 150, m: ["What do you even do?", "Negative impact on the server",
+                    "Your teammates are reporting you"
+                ] }, { t: 200, m: ["Mediocre at best", "You exist, I guess",
+                    "Room for improvement (a lot)"
+                ] }, { t: 250, m: ["Decent but still mid", "You're trying (and failing)",
+                    "Average: the player"
+                ] }, { t: 300, m: ["Okay I see you", "Not terrible, not great",
+                    "Slightly above average (wow)"
+                ] }, { t: 999, m: ["Sweaty tryhard detected", "Do you even sleep?",
+                    "Suspect performance"
+                ] }];
+            const WR_R = [{ t: 30, m: ["Negative winrate, negative brain cells", "You're actively throwing",
+                    "Your teammates are suffering"
+                ] }, { t: 45, m: ["Below average, like your life", "Can't win can't lose (mostly lose)",
+                    "You're trying (not hard enough)"
+                ] }, { t: 55, m: ["Average at best", "50/50 chance of being useless",
+                    "Mediocrity: the player"
+                ] }, { t: 65, m: ["Decent but still mid", "You're okay I guess",
+                    "Slightly above average (wow)"
+                ] }, { t: 999, m: ["Sweaty tryhard detected", "Do you even lose?",
+                    "Suspect winrate"
+                ] }];
+            const LV_R = [{ t: 10, m: ["Fresh account, fresh trash", "New player, same bad aim",
+                    "You're still learning (and failing)"
+                ] }, { t: 30, m: ["Still bad, but with more hours",
+                    "You've been playing for a while and still suck", "Time doesn't equal skill, clearly"
+                ] }, { t: 50, m: ["Okay you play a lot but aren't good", "All that time, still average",
+                    "You're dedicated (to being mid)"
+                ] }, { t: 80, m: ["You're decent, I guess", "Good player, bad luck",
+                    "Above average: the story"
+                ] }, { t: 120, m: ["Sweaty tryhard detected", "Touch grass challenge: impossible",
+                    "You have no life but you're good"
+                ] }, { t: 999, m: ["Grinder alert", "Do you even sleep?",
+                    "Maximum effort, minimum life"
+                ] }];
+            const HS_R = [{ t: 10, m: ["Headshots? What are those?", "You're aiming at the floor",
+                    "Body shots only (and missing)"
+                ] }, { t: 15, m: ["You found the head by accident", "Barely hitting heads",
+                    "Your aim is questionable"
+                ] }, { t: 20, m: ["Average headshot rate", "You're okay I guess",
+                    "Sometimes you hit heads (rarely)"
+                ] }, { t: 25, m: ["Decent aim, decent life", "You're getting there",
+                    "Above average (wow)"
+                ] }, { t: 35, m: ["Clean aim detected", "You're actually good (sus)",
+                    "Headshot machine"
+                ] }, { t: 999, m: ["Suspiciously good aim", "Are you cheating?",
+                    "Your HS% is insane"
+                ] }];
+
+            function roast(c, v) {
+                let r;
+                switch (c) {
+                    case 'kd':
+                        r = KD_R;
+                        break;
+                    case 'acs':
+                        r = ACS_R;
+                        break;
+                    case 'wr':
+                        r = WR_R;
+                        break;
+                    case 'lv':
+                        r = LV_R;
+                        break;
+                    case 'hs':
+                        r = HS_R;
+                        break;
+                    default:
+                        return "";
+                }
+                for (const x of r) {
+                    if (v <= x.t) return x.m[Math.floor(Math.random() * x.m.length)];
+                }
+                return r[r.length - 1].m[Math.floor(Math.random() * r[r.length - 1].m.length)];
+            }
+
+            function verdict(kd, acs, wr, lv, hs) {
+                let s = 0;
+                if (kd >= 1.5) s += 25;
+                else if (kd >= 1.2) s += 20;
+                else if (kd >= 1) s += 15;
+                else if (kd >= .8) s += 10;
+                else if (kd >= .6) s += 5;
+
+                if (acs >= 300) s += 25;
+                else if (acs >= 250) s += 20;
+                else if (acs >= 200) s += 15;
+                else if (acs >= 150) s += 10;
+                else if (acs >= 100) s += 5;
+
+                if (wr >= 65) s += 25;
+                else if (wr >= 55) s += 20;
+                else if (wr >= 50) s += 15;
+                else if (wr >= 45) s += 10;
+                else if (wr >= 40) s += 5;
+
+                if (hs >= 35) s += 25;
+                else if (hs >= 25) s += 20;
+                else if (hs >= 20) s += 15;
+                else if (hs >= 15) s += 10;
+                else if (hs >= 10) s += 5;
+
+                if (lv >= 100) s += 10;
+                else if (lv >= 70) s += 7;
+                else if (lv >= 40) s += 4;
+                else if (lv >= 20) s += 2;
+
+                let v, ro, cs;
+                if (s >= 85) { v = "SUSPICIOUSLY DECENT";
+                    ro = "You're actually good... sus 🚨 Are you smurfing or just having a good day?";
+                    cs = "sus"; } else if (s >= 70) { v = "SOLID PERFORMER";
+                    ro = "You're actually not terrible. Your teammates are still reporting you though.";
+                    cs = "good"; } else if (s >= 55) { v = "MEDIOCRE AT BEST";
+                    ro = "You exist. That's about it. Your impact is questionable.";
+                    cs = "mid"; } else if (s >= 40) { v = "UNDERWHELMING";
+                    ro = "Your stats are bad and you should feel bad. Uninstall is an option.";
+                    cs = "fire"; } else if (s >= 25) { v = "CERTIFIED DUMPSTER FIRE";
+                    ro = "🔥 You are genuinely bad. Your teammates are crying. Please seek help.";
+                    cs = "fire"; } else { v = "ABSOLUTE TRASH";
+                    ro = "🗑️ You are the worst player I've ever seen. How do you even turn on the PC?";
+                    cs = "fire"; }
+                return { s, v, ro, cs };
+            }
+
+            const WB = ["CARRIED", "GOD MODE", "EZ CLAP", "SMURFING", "UNSTOPPABLE", "CLUTCH KING", "HARD CARRY", "BEAST MODE",
+                "DIFFING", "1V9", "CLEAN", "IMPROVING"
+            ];
+            const LB = ["REPORTED", "INTING", "USELESS", "BOT", "THROWING", "GRIEFING", "FREE KILLS", "NEGATIVE IMPACT",
+                "CLOWN", "0 BRAIN CELLS", "PLEASE UNINSTALL", "FRAUD"
+            ];
+
+            function badge(w, a) {
+                const p = w ? WB : LB;
+                let b = p[Math.floor(Math.random() * p.length)];
+                if (w && a > 300) b = "GOD MODE";
+                else if (w && a > 250) b = "HARD CARRY";
+                else if (w && a < 150) b = "PURPLE" + (Math.random() > .5 ? " (boosted)" : " (lucky)");
+                else if (!w && a < 80) b = "INTING" + (Math.random() > .5 ? " HARD" : " EXTREME");
+                else if (!w && a > 250) b = "GRIEFING (good player bad luck)";
+                return b;
+            }
+
+            const AR = {
+                "Jett": "Instalock Jett, zero carry potential",
+                "Reyna": "Reyna main with no aim",
+                "Chamber": "Still playing Chamber in 2024?",
+                "Sage": "Sage main = heals for self only",
+                "Phoenix": "Phoenix ult = run it down mid",
+                "Raze": "Raze main = boom boom brain dead",
+                "Sova": "Sova main = wallhacks but still misses",
+                "Viper": "Viper main = lineups but no kills",
+                "Cypher": "Cypher main = camera simulator",
+                "Breach": "Breach main = stun yourself too",
+                "Killjoy": "Killjoy main = turret carries you",
+                "Skye": "Skye main = dog does more than you",
+                "Yoru": "Yoru main = tp into enemy team",
+                "Astra": "Astra main = map simulator",
+                "Omen": "Omen main = tp off the map",
+                "Brimstone": "Brimstone main = old man gaming",
+                "Kay/O": "Kay/O main = full utility, zero kills",
+                "Neon": "Neon main = run fast, die fast",
+                "Fade": "Fade main = highlight yourself",
+                "Harbor": "Harbor main = water you doing?",
+                "Gekko": "Gekko main = pet simulator",
+                "Deadlock": "Deadlock main = lockdown but locked down"
+            };
+
+            function agentRoast(a) {
+                for (const [k, r] of Object.entries(AR)) {
+                    if (a.toLowerCase().includes(k.toLowerCase())) return r;
+                }
+                return a + " main = questionable life choices";
+            }
+
+            function sg(o, p, f) {
+                try {
+                    const ps = p.split('.');
+                    let c = o;
+                    for (const x of ps) {
+                        if (c == null) return f;
+                        c = c[x];
+                    }
+                    return c != undefined ? c : f;
+                } catch (_) { return f; }
+            }
+
+            function fp(m, n, t) {
+                const ln = n.toLowerCase(),
+                    lt = t.toLowerCase();
+                return (m.players?.all_players || m.players || []).find(p =>
+                    (p.gameName || p.name || '').toLowerCase() === ln &&
+                    (p.tag || p.tagLine || '').toLowerCase() === lt
+                );
+            }
+
+            function pw(m, p) {
+                if (!m.teams || !p?.team) return false;
+                const t = p.team.toLowerCase();
+                if (t === 'blue') return !!m.teams.blue?.has_won;
+                if (t === 'red') return !!m.teams.red?.has_won;
+                return false;
+            }
+
+            function gs(m, p) {
+                if (!m.teams || !p?.team) return { ts: 0, es: 0 };
+                const t = p.team.toLowerCase();
+                if (t === 'blue') return { ts: m.teams.blue?.rounds_won || 0, es: m.teams.red?.rounds_won || 0 };
+                return { ts: m.teams.red?.rounds_won || 0, es: m.teams.blue?.rounds_won || 0 };
+            }
+
+            function fsl(id) {
+                if (!id) return '?';
+                let m = id.match(/^([eE])(\d+)[aA](\d+)$/);
+                if (m) return 'Ep ' + m[2] + ' Act ' + m[3];
+                m = id.match(/^([vV])(\d{2,4})[aA](\d+)$/);
+                if (m) { let y = parseInt(m[2]); if (y < 100) y += 2000; return y + ' Act ' + m[3]; }
+                m = id.match(/^season[- ](\d{4})[- ]act[- ](\d+)$/i);
+                if (m) return 'Season ' + m[1] + ' Act ' + m[2];
+                return id;
+            }
+
+            function gsk(id) {
+                let m = id.match(/^([eE])(\d+)[aA](\d+)$/);
+                if (m) return { p: parseInt(m[2]), s: parseInt(m[3]) };
+                m = id.match(/^([vV])(\d{2,4})[aA](\d+)$/);
+                if (m) { let y = parseInt(m[2]); if (y < 100) y += 2000; return { p: y, s: parseInt(m[3]) }; }
+                m = id.match(/^season[- ](\d{4})[- ]act[- ](\d+)$/i);
+                if (m) return { p: parseInt(m[1]), s: parseInt(m[2]) };
+                return { p: 0, s: 0 };
+            }
+
+            function ssk(s) {
+                return Array.from(s).sort((a, b) => {
+                    const ka = gsk(a),
+                        kb = gsk(b);
+                    return ka.p !== kb.p ? ka.p - kb.p : ka.s - kb.s;
+                });
+            }
+
+            function fta(d) {
+                if (!d || isNaN(d.getTime())) return '?';
+                const s = Math.floor((Date.now() - d.getTime()) / 1000);
+                if (s < 60) return 'just now';
+                const m = Math.floor(s / 60);
+                if (m < 60) return m + 'm ago';
+                const h = Math.floor(m / 60);
+                if (h < 24) return h + 'h ago';
+                return Math.floor(h / 24) + 'd ago';
+            }
+
+            function trn(r) {
+                if (!r) return 'Certified Bot';
+                const l = r.toLowerCase();
+                if (l.includes('radiant')) return 'Jobless Rank';
+                if (l.includes('immortal')) return 'Sweaty Tryhard';
+                if (l.includes('ascendant')) return 'Elo Boosted';
+                if (l.includes('diamond')) return 'Hardstuck Trash';
+                if (l.includes('platinum')) return 'Gatekeeper Victim';
+                if (l.includes('gold')) return 'Average Mediocre';
+                if (l.includes('silver')) return 'Lobby Filler';
+                if (l.includes('bronze')) return 'Intentional Feeder';
+                if (l.includes('iron')) return 'Bot Account';
+                return 'Unranked Trash';
+            }
+
+            function gfm() {
+                if (!lastMatchesAll.length) return [];
+                const cs = gcs();
+                let f = lastMatchesAll.filter(m => {
+                    const q = (m.metadata?.queue || '').toLowerCase(),
+                        md = (m.metadata?.mode || '').toLowerCase();
+                    return (q === 'competitive' || md === 'competitive') &&
+                        (cs === 'all' || (m.metadata?.season || m.metadata?.season_id) === cs);
+                });
+                if (!f.length) f = lastMatchesAll.filter(m => {
+                    const q = (m.metadata?.queue || '').toLowerCase(),
+                        md = (m.metadata?.mode || '').toLowerCase();
+                    return q === 'competitive' || md === 'competitive';
+                });
+                if (!f.length && cs !== 'all') f = lastMatchesAll.filter(m =>
+                    (m.metadata?.season || m.metadata?.season_id) === cs);
+                if (!f.length) f = lastMatchesAll;
+                return f;
+            }
+
+            function gcs() {
+                const r = lastMmr?.current_data?.season || lastMmr?.current_data?.season_id;
+                if (r) return r;
+                const s = new Set();
+                if (Array.isArray(lastMatchesAll))
+                    for (const m of lastMatchesAll) {
+                        const x = m.metadata?.season || m.metadata?.season_id;
+                        if (x) s.add(x);
+                    }
+                if (lastMmr?.by_season)
+                    for (const x of Object.keys(lastMmr.by_season)) s.add(x);
+                if (!s.size) return 'all';
+                const sorted = ssk(s);
+                return sorted[sorted.length - 1];
+            }
+
+            async function fetchData() {
+                const q = searchInput.value.trim(),
+                    rg = regionSelect.value;
+                if (!q.includes('#')) { renderError('Format wrong noob! Use Name#TAG'); return; }
+                const pts = q.split('#');
+                const nm = pts[0].trim(),
+                    tg = pts.slice(1).join('#').trim();
+                if (!nm || !tg) { renderError('Format wrong noob! Use Name#TAG'); return; }
+                const isKitty = document.body.classList.contains('theme-kitty');
+                searchBtn.disabled = true;
+                searchBtn.textContent = isKitty ? '🐱 LOADING... 🐱' : 'LOADING...';
+                renderLoading();
+                statusMsg.textContent = '⏳ fetching...';
+                try {
+                    const ar = await fetch(AB + '/v1/account/' + encodeURIComponent(nm) + '/' + encodeURIComponent(tg), {
+                        headers: { 'Authorization': AK }
+                    });
+                    if (!ar.ok) { let msg = 'Account not found (' + ar.status + ')';
+                        try { const j = await ar.json(); if (j.errors?.[0]?.message) msg = j.errors[0].message; } catch (
+                        _) {} throw new Error(msg); }
+                    const ad = (await ar.json()).data;
+                    let acr = ad.region && ad.region !== 'global' ? ad.region : rg;
+                    let md = null;
+                    try {
+                        const r = await fetch(AB + '/v2/mmr/' + acr + '/' + encodeURIComponent(nm) + '/' + encodeURIComponent(
+                            tg), { headers: { 'Authorization': AK } });
+                        if (r.ok) md = (await r.json()).data;
+                    } catch (_) {}
+                    let ms = [],
+                        ip = false;
+                    try {
+                        const r = await fetch(AB + '/v3/by-puuid/matches/' + acr + '/' + ad.puuid + '?size=50', {
+                            headers: { 'Authorization': AK }
+                        });
+                        if (r.ok) { const j = await r.json(); if (Array.isArray(j)) ms = j;
+                            else if (j.data && Array.isArray(j.data)) ms = j.data; } else { const t = await r.text(); if (t
+                                .toLowerCase().includes('private') || r.status === 400) ip = true; }
+                    } catch (_) {}
+                    lastAccount = ad;
+                    lastMmr = md;
+                    lastMatchesAll = ms;
+                    lastName = nm;
+                    lastTag = tg;
+                    lastActiveRegion = acr;
+                    lastIsPrivate = ip;
+                    currentPlayerData = { name: ad.name || nm, tag: ad.tag || tg, region: acr };
+                    renderProfile();
+                    statusMsg.textContent = '✅ loaded';
+                    setTimeout(() => { showRandAch();
+                        showRandAch(); }, 1500);
+                } catch (err) {
+                    console.error(err);
+                    renderError(err.message || 'Something went wrong.');
+                    statusMsg.textContent = '❌ error';
+                    shake();
+                } finally {
+                    searchBtn.disabled = false;
+                    searchBtn.textContent = document.body.classList.contains('theme-kitty') ? '🐱 CLICK FOR STATS! 🐱' :
+                        'CLICK FOR STATS!';
+                }
+            }
+
+            function renderLoading() {
+                profileContent.innerHTML =
+                    `<div class="status-box"><div class="loader"></div><p>${document.body.classList.contains('theme-kitty') ? '🌸 Fetching your beautiful stats... 🌸' : 'Stealing stats from Riot\'s basement...'}</p></div>`;
+                statusMsg.textContent = '⏳ loading...';
+            }
+
+            function renderError(msg) {
+                profileContent.innerHTML =
+                    `<div class="status-box"><div class="error-text">${document.body.classList.contains('theme-kitty') ? '🌸 OOPSIE! 🌸' : '⚠️ ERROR 404: SKILL NOT FOUND ⚠️'}</div><p style="margin-top:20px;color:var(--status-color);">${msg}</p><p style="margin-top:10px;font-size:12px;color:#888;">Tip: use Name#TAG (e.g. TenZ#NA1)</p></div>`;
+                statusMsg.textContent = '❌ error';
+                shake();
+            }
+
+            function renderProfile() {
+                const acc = lastAccount,
+                    mmr = lastMmr,
+                    matches = gfm(),
+                    nm = lastName,
+                    tg = lastTag;
+                let rK = 0,
+                    rD = 0,
+                    rA = 0,
+                    rACS = 0;
+                const ag = {};
+                const acH = [],
+                    kdH = [];
+                let tHS = 0,
+                    tSh = 0,
+                    sW = 0,
+                    sL = 0;
+                if (Array.isArray(matches)) {
+                    for (const m of matches) {
+                        const p = fp(m, nm, tg);
+                        if (!p?.stats) continue;
+                        const k = p.stats.kills || 0,
+                            d = p.stats.deaths || 0,
+                            a = p.stats.assists || 0,
+                            rd = m.metadata?.rounds_played || 1,
+                            acs = Math.round((p.stats.score || 0) / rd);
+                        rK += k;
+                        rD += d;
+                        rA += a;
+                        rACS += acs;
+                        const hs = p.stats.headshots || 0,
+                            bs = p.stats.bodyshots || 0,
+                            ls = p.stats.legshots || 0;
+                        tHS += hs;
+                        tSh += (hs + bs + ls);
+                        const an = p.character || '?';
+                        if (!ag[an]) ag[an] = { name: an, icon: sg(p, 'assets.agent.small', ''), kills: 0, deaths: 0,
+                            games: 0, wins: 0 };
+                        ag[an].kills += k;
+                        ag[an].deaths += d;
+                        ag[an].games++;
+                        if (pw(m, p)) ag[an].wins++;
+                        acH.push(acs);
+                        kdH.push(parseFloat((d === 0 ? k : k / d).toFixed(2)));
+                    }
+                    for (const m of matches) { const p = fp(m, nm, tg); if (!p) continue; if (pw(m, p)) sW++;
+                        else sL++; }
+                }
+                const rG = matches.length,
+                    rKD = rD === 0 ? rK : rK / rD,
+                    rKDD = rKD.toFixed(2),
+                    rAvgACS = rG > 0 ? Math.round(rACS / rG) : 0,
+                    hsPct = tSh > 0 ? Math.round(tHS / tSh * 100) : 0;
+                const sWR = sW + sL > 0 ? (sW / (sW + sL) * 100) : 0,
+                    sWRD = sWR.toFixed(1);
+                let cd = mmr?.current_data || mmr,
+                    rN = 'Unranked',
+                    rI = 'https://media.valorant-api.com/competitivetiers/00000000-0000-0000-0000-000000000000/0/largeicon.png',
+                    rr = 0;
+                if (cd?.currenttierpatched) { rN = cd.currenttierpatched;
+                    rr = cd.ranking_in_tier || 0; if (cd.images?.large) rI = cd.images.large; }
+                let pR = 'Unranked',
+                    pT = -1;
+                const tM = { unrated: 0, iron: 1, bronze: 2, silver: 3, gold: 4, platinum: 5, diamond: 6, ascendant: 7,
+                    immortal: 8, radiant: 9 };
+                if (mmr?.by_season)
+                    for (const [, sd] of Object.entries(mmr.by_season)) {
+                        const r = sd.final_rank_patched || sd.currenttierpatched || '';
+                        let t = -1;
+                        for (const [k, v] of Object.entries(tM))
+                            if (r.toLowerCase().includes(k) && v > t) t = v;
+                        if (t > pT) { pT = t;
+                            pR = r; }
+                    }
+                if (pT === -1 && rN !== 'Unranked') pR = rN;
+                const tR = trn(rN),
+                    lv = acc.account_level || 0,
+                    card = acc.card?.small || '';
+                const kdRo = roast('kd', rKD),
+                    acsRo = roast('acs', rAvgACS),
+                    wrRo = roast('wr', sWR),
+                    lvRo = roast('lv', lv),
+                    hsRo = roast('hs', hsPct);
+                const vd = verdict(rKD, rAvgACS, sWR, lv, hsPct);
+                let sarc = getSarcasm();
+                if (sW + sL > 0) {
+                    const w = parseFloat(sWRD);
+                    if (w < 40) sarc = 'Absolute trash, go back to tutorial';
+                    else if (w < 50) sarc = 'Negative winrate, yikes';
+                    else if (w < 55) sarc = 'Average at best, like your life';
+                    else if (w < 65) sarc = 'Decent but still boosted';
+                    else sarc = 'Tryhard alert! Do you even touch grass?';
+                }
+
+                let mHTML = '',
+                    dM = [];
+                if (lastIsPrivate || !Array.isArray(matches) || !matches.length) {
+                    mHTML =
+                        `<div class="status-box" style="padding:40px;">⚠️ NO RECENT MATCHES ⚠️<br><span style="font-size:14px;color:var(--accent-2);">Private, timed out, or no comp matches.</span></div>`;
+                } else {
+                    dM = matches.slice(0, 10);
+                    mHTML = dM.map((m, i) => {
+                        const p = fp(m, nm, tg);
+                        if (!p) return '';
+                        const k = p.stats?.kills || 0,
+                            d = p.stats?.deaths || 0,
+                            a = p.stats?.assists || 0,
+                            rd = m.metadata?.rounds_played || 1,
+                            acs = Math.round((p.stats?.score || 0) / rd),
+                            w = pw(m, p),
+                            { ts, es } = gs(m, p),
+                            rc = w ? 'win' : 'loss',
+                            bg = badge(w, acs),
+                            ai = sg(p, 'assets.agent.small', ''),
+                            mn = m.metadata?.map?.name || 'Unknown',
+                            si = m.metadata?.season || m.metadata?.season_id || '',
+                            sl = fsl(si),
+                            ta = m.metadata?.game_start ? fta(new Date(m.metadata.game_start * 1000)) : 'unknown';
+                        let mr;
+                        if (w) {
+                            const ws = ["You actually did something right", "Your team carried you tbh",
+                                "Even a broken clock is right twice a day", "Don't let this win fool you",
+                                "You're still bad but nice win", "Your teammates deserve a medal",
+                                "Smurfing? Or just lucky?", "One win doesn't fix your KD",
+                                "You got carried, admit it", "Your enemies were worse than you"
+                            ];
+                            mr = ws[Math.floor(Math.random() * ws.length)];
+                        } else {
+                            const ls = ["You're the reason we lost", "Did you even try?", "Your aim is questionable",
+                                "0 impact, 0 kills, 0 brain cells", "Enemy team farming you",
+                                "You're getting diffed hard", "Please uninstall",
+                                "Your teammates are reporting you", "You're a liability",
+                                "The enemy team loves you (free kills)",
+                                "You're making it look easy (to beat you)", "Your rank is a lie"
+                            ];
+                            mr = ls[Math.floor(Math.random() * ls.length)];
+                        }
+                        return `
+                  <div class="match ${rc}" data-idx="${i}" role="button" tabindex="0">
+                    <div class="match-bar"></div>
+                    <div class="troll-badge">${bg}</div>
+                    <div class="match-body">
+                      <div class="match-info">
+                        <div class="agent-icon"><img src="${ai}" alt="" loading="lazy"></div>
+                        <div class="match-details">
+                          <h3>${ts} - ${es} (${w ? 'EZ CLAP' : 'GET GOOD'})</h3>
+                          <p>${mn} · ${p.character||'?'} · ${ta} <span style="color:var(--accent-4);">(${sl})</span></p>
+                          <div class="match-roast">💬 ${mr}</div>
+                          <div class="click-hint">🔍 TAP FOR FULL SCOREBOARD</div>
+                        </div>
+                      </div>
+                      <div class="match-stats">
+                        <div class="mstat"><div class="mstat-val">${k}</div><div class="mstat-lbl">Bodies</div></div>
+                        <div class="mstat"><div class="mstat-val">${d}</div><div class="mstat-lbl">Donated</div></div>
+                        <div class="mstat"><div class="mstat-val">${a}</div><div class="mstat-lbl">Charity</div></div>
+                        <div class="mstat"><div class="mstat-val">${acs}</div><div class="mstat-lbl">ACS</div></div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                    }).join('');
+                }
+                lastDisplayMatches = dM;
+
+                const topAgents = Object.values(ag).sort((a, b) => b.games - a.games).slice(0, 5);
+                let agentsHTML = '';
+                if (topAgents.length > 0) {
+                    agentsHTML = topAgents.map(agent => {
+                        const aKD = agent.deaths === 0 ? agent.kills : (agent.kills / agent.deaths);
+                        const aKDDisplay = aKD.toFixed(2);
+                        const aWR = ((agent.wins / agent.games) * 100).toFixed(1);
+                        const roast = agentRoast(agent.name);
+                        return `
+                  <div class="agent-row">
+                    <div class="agent-mini"><img src="${agent.icon}" alt="" loading="lazy"></div>
+                    <div class="agent-info">
+                      <div class="agent-name">${agent.name}</div>
+                      <div class="agent-stats">${agent.games} games · ${aKDDisplay} K/D · ${aWR}% WR</div>
+                      <div class="agent-roast">💬 ${roast}</div>
+                    </div>
+                    <div class="agent-wr">${aWR}%</div>
+                  </div>
+                `;
+                    }).join('');
+                } else {
+                    agentsHTML =
+                        `<div style="color:var(--accent-3);text-align:center;padding:20px;">No agent data. Probably instalocks Reyna.</div>`;
+                }
+
+                profileContent.innerHTML = `
+              <section class="hero">
+                <div class="hero-grid">
+                  <div class="hero-left">
+                    <div class="avatar"><img src="${card}" alt="Player Card" loading="lazy"></div>
+                    <div class="level-badge">LVL ${lv} (UNPAID RIOT INTERN)</div>
+                    <div class="player-name">${acc.name||nm}</div>
+                    <div class="player-tag">#${acc.tag||tg} · ${lastActiveRegion.toUpperCase()}</div>
+                    <div class="rank-display">
+                      <img src="${rI}" alt="${rN}" loading="lazy">
+                      <div class="rank-name">${rN}</div>
+                      <div class="troll-rank">aka: ${tR}</div>
+                      <div class="rr-text">${rr} RR (Rage Rating)</div>
+                      <div class="peak-rank">🏆 Peak: ${pR}</div>
+                    </div>
+                    <div class="sarcastic-comment">💬 ${sarc}</div>
+                  </div>
+                  <div class="hero-right">
+                    <div class="stat-card"><div class="stat-value">${sW}</div><div class="stat-label">Season Wins</div><div class="stat-roast">${wrRo}</div></div>
+                    <div class="stat-card"><div class="stat-value">${sL}</div><div class="stat-label">Season Losses</div><div class="stat-roast">${lvRo}</div></div>
+                    <div class="stat-card"><div class="stat-value">${sWRD}%</div><div class="stat-label">Season Win Rate</div><div class="stat-roast">${wrRo}</div></div>
+                    <div class="stat-card"><div class="stat-value">${sW+sL}</div><div class="stat-label">Season Games</div><div class="stat-roast">${lvRo}</div></div>
+                    <div class="stat-card"><div class="stat-value">${rKDD}</div><div class="stat-label">Recent K/D</div><div class="stat-roast">${kdRo}</div></div>
+                    <div class="stat-card"><div class="stat-value">${rAvgACS}</div><div class="stat-label">Recent ACS</div><div class="stat-roast">${acsRo}</div></div>
+                  </div>
+                </div>
+              </section>
+
+              <div class="verdict-box">
+                <div class="verdict-title">⚖️ THE VERDICT ⚖️</div>
+                <div class="verdict-score">Score: ${vd.s}/100</div>
+                <div class="verdict-roast ${vd.cs}">${vd.v}</div>
+                <div class="verdict-body">${vd.ro}</div>
+              </div>
+
+              <div class="content-grid">
+                <div>
+                  <div class="section-title">🔥 RECENT DISASTERS 🔥</div>
+                  <div class="match-list">${mHTML}</div>
+                </div>
+                <aside>
+                  <div class="section-title">🤡 MAIN ABUSERS 🤡</div>
+                  <div class="side-card">
+                    <div class="side-head">TOP CRUTCH AGENTS</div>
+                    ${agentsHTML}
+                  </div>
+                  <div class="chart-card">
+                    <div class="side-head" style="color:var(--chart-head);">BURDEN SCORE GRAPH</div>
+                    <div class="chart-wrap"><canvas id="perfChart"></canvas></div>
+                  </div>
+                </aside>
+              </div>
+            `;
+                renderChart([...acH].reverse(), [...kdH].reverse());
+                statusMsg.textContent = '✅ loaded';
+                setTimeout(() => { showRandAch();
+                    showRandAch(); }, 1000);
+            }
+
+            function renderChart(acsData, kdData) {
+                const canvas = document.getElementById('perfChart');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                if (perfChart) { perfChart.destroy();
+                    perfChart = null; }
+                if (!acsData || acsData.length === 0) {
+                    perfChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: { labels: ['No Data'], datasets: [{ label: 'ACS', data: [0],
+                                backgroundColor: '#ffb6c1', borderColor: '#ff69b4', borderWidth: 1,
+                            yAxisID: 'y' }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#e4002b',
+                                        font: { family: 'Comic Neue' } } } }, scales: { x: { grid: { color: '#ffc0cb' },
+                                    ticks: { color: '#ff69b4' } }, y: { grid: { color: '#ffc0cb' }, ticks: { color: '#ff69b4' },
+                                    min: 0 } } }
+                    });
+                    return;
+                }
+                while (kdData.length < acsData.length) kdData.push(0);
+                const labels = acsData.map((_, i) => `M${i+1}`);
+                perfChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'ACS', data: acsData, backgroundColor: '#ffb6c1', borderColor: '#ff69b4',
+                                borderWidth: 2, yAxisID: 'y' },
+                            { label: 'K/D', data: kdData, type: 'line', borderColor: '#e4002b',
+                                backgroundColor: 'rgba(228, 0, 43, 0.15)', tension: 0.3,
+                                pointBackgroundColor: '#e4002b', pointBorderColor: '#fff', pointRadius: 4,
+                                fill: true, yAxisID: 'y1' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#e4002b', font: { family: 'Comic Neue',
+                                    size: 12 } } } },
+                        scales: {
+                            x: { grid: { color: '#ffc0cb' }, ticks: { color: '#ff69b4', font: { family: 'Comic Neue',
+                                        size: 10 } } },
+                            y: { grid: { color: '#ffc0cb' }, ticks: { color: '#ff69b4' }, position: 'left',
+                                title: { display: true, text: 'ACS', color: '#ff69b4' }, beginAtZero: true },
+                            y1: { grid: { drawOnChartArea: false }, ticks: { color: '#e4002b' }, position: 'right',
+                                title: { display: true, text: 'K/D', color: '#e4002b' }, beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            // ======== INTERACTIVE TROLLS ========
+            function getSarcasm() {
+                const sarc = ["Skill issue detected", "Uninstall recommended", "Is this your alt account?",
+                    "Your rank is a lie", "Maybe try Minecraft?", "Reported for being bad",
+                    "You made my day worse", "I've seen better aim in a wheelchair",
+                    "Your mom doesn't even love you", "This is why you have no friends",
+                    "You are the reason we can't have nice things", "Did you buy this account?",
+                    "Your KD is lower than your IQ", "Please touch grass",
+                    "You are the final boss of being average"
+                ];
+                return sarc[Math.floor(Math.random() * sarc.length)];
+            }
+
+            function shake() {
+                document.body.classList.add('shake');
+                setTimeout(() => document.body.classList.remove('shake'), 300);
+            }
+
+            function showRandAch() {
+                const pool = document.body.classList.contains('theme-kitty') ?
+                    ['🐱', '🧠', '🎀', '📉', '🤡', '🗑️', '😭', '🚨', '🪦', '🔥', '🌸', '💔'] :
+                    ['💀', '🧠', '🎯', '📉', '🤡', '🗑️', '😭', '🚨', '🪦', '🔥', '🎪', '💔'];
+                const emoji = pool[Math.floor(Math.random() * pool.length)];
+                const texts = document.body.classList.contains('theme-kitty') ?
+                    ["Kitty Level Skill", "0 Brain Cells", "Missing: Your Aim", "Negative Impact", "Clown Performance",
+                        "Dumpster Fire", "Cry More", "Fraud Alert", "Rest In Pieces", "You're On Fire (in a bad way)",
+                        "Flower Power Failure", "Your Teammates Hate You"
+                    ] :
+                    ["Kitty Level Skill", "0 Brain Cells", "Missing: Your Aim", "Negative Impact", "Clown Performance",
+                        "Dumpster Fire", "Cry More", "Fraud Alert", "Rest In Pieces", "You're On Fire (in a bad way)",
+                        "Flower Power Failure", "Your Teammates Hate You"
+                    ];
+                const text = texts[Math.floor(Math.random() * texts.length)];
+                const el = document.createElement('div');
+                el.className = 'achievement';
+                el.innerHTML = `<span class="ach-emoji">${emoji}</span> ${text}`;
+                achievementContainer.appendChild(el);
+                setTimeout(() => { el.classList.add('fade-out');
+                    setTimeout(() => { if (el.parentNode) el.remove(); }, 600); }, 3500);
+            }
+
+            // ======== EVENT BINDINGS ========
+            searchBtn.addEventListener('click', fetchData);
+            searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') fetchData(); });
+            document.addEventListener('click', e => {
+                const card = e.target.closest('.match[data-idx]');
+                if (card) openMatchDetail(parseInt(card.dataset.idx, 10));
+            });
+
+            // Button runaway (troll)
+            const btn = document.getElementById('searchBtn');
+            btn.addEventListener('mouseover', () => {
+                if (isStatic || btn.disabled) return;
+                missCount++;
+                if (missCount >= 10) {
+                    isStatic = true;
+                    btn.classList.add('static');
+                    missPopup.style.display = 'block';
+                    showRandAch();
+                    return;
+                }
+                const maxX = window.innerWidth - btn.offsetWidth - 20;
+                const maxY = window.innerHeight - btn.offsetHeight - 30;
+                const x = Math.max(10, Math.random() * maxX);
+                const y = Math.max(80, Math.random() * maxY);
+                btn.style.position = 'fixed';
+                btn.style.left = x + 'px';
+                btn.style.top = y + 'px';
+                btn.style.zIndex = '999';
+            });
+            btn.addEventListener('click', () => {
+                btn.style.position = 'relative';
+                btn.style.left = 'auto';
+                btn.style.top = 'auto';
+                btn.style.zIndex = '30';
+            });
+
+            popupOkBtn.addEventListener('click', () => {
+                missPopup.style.display = 'none';
+                missCount = 0;
+                btn.classList.add('static');
+                btn.style.position = 'relative';
+                btn.style.left = 'auto';
+                btn.style.top = 'auto';
+                btn.style.zIndex = '30';
+            });
+
+            // Vanguard banner -> fake ban
+            let banActive = false;
+            vanguardBanner.addEventListener('click', () => {
+                if (banActive) return;
+                banActive = true;
+                const overlay = document.createElement('div');
+                overlay.className = 'ban-overlay';
+                const isKitty = document.body.classList.contains('theme-kitty');
+                overlay.innerHTML = `
+              <div class="ban-icon">${isKitty ? '🐱' : '🚫'}</div>
+              <div class="ban-title">YOUR ACCOUNT HAS BEEN BANNED</div>
+              <div class="ban-sub">REASON: ${isKitty ? 'LACK OF SKILL 💀' : 'LACK OF SKILL 💀'}</div>
+              <button class="ban-dismiss">${isKitty ? '🌸 OK I\'LL BE BETTER 🌸' : 'I WILL GET GOOD'}</button>
+            `;
+                document.body.appendChild(overlay);
+                overlay.querySelector('.ban-dismiss').addEventListener('click', () => {
+                    overlay.remove();
+                    banActive = false;
+                    showRandAch();
+                });
+                setTimeout(() => { if (overlay.parentNode) { overlay.remove();
+                        banActive = false; } }, 8000);
+                shake();
+            });
+
+            adBar.addEventListener('click', () => {
+                const overlay = document.createElement('div');
+                overlay.className = 'jumpscare-overlay';
+                const emoji = document.body.classList.contains('theme-kitty') ? '🌸' : '💀';
+                overlay.innerHTML =
+                    `<div class="jumpscare-emoji">${emoji}</div><div class="jumpscare-text">${document.body.classList.contains('theme-kitty') ? 'MEOW!' : 'BOO!'}</div>`;
+                document.body.appendChild(overlay);
+                setTimeout(() => { overlay.remove(); }, 1000);
+                showRandAch();
+            });
+
+            // Monkey click
+            document.getElementById('monkey').addEventListener('click', () => {
+                alert(document.body.classList.contains('theme-kitty') ? '🐱 MEOW NYA~!' : '🐵 MONKEY BUSINESS');
+                showRandAch();
+            });
+
+            // Report self
+            reportSelfBtn.addEventListener('click', () => {
+                if (currentPlayerData) {
+                    const name = currentPlayerData.name + '#' + currentPlayerData.tag;
+                    showRandAch();
+                    alert(document.body.classList.contains('theme-kitty') ?
+                        `🌸 ${name} is doing great! 🌸` :
+                        `Reported ${name} for being bad`);
+                } else {
+                    showRandAch();
+                    alert('No stats loaded, but you reported yourself anyway.');
+                }
+                shake();
+            });
+
+            // Tips rotation
+            setInterval(() => {
+                tipIdx = (tipIdx + 1) % TIPS.length;
+                tipsBar.innerHTML = `<span>${TIPS[tipIdx]}</span>`;
+            }, 6000);
+
+            // Chat rotation
+            setInterval(() => {
+                const msg = CHATS[Math.floor(Math.random() * CHATS.length)];
+                chatOverlay.style.display = 'block';
+                chatOverlay.innerHTML =
+                    `<span class="chat-name">${msg.n}:</span> <span class="chat-msg">${msg.m}</span>`;
+                chatOverlay.style.animation = 'none';
+                void chatOverlay.offsetHeight;
+                chatOverlay.style.animation = 'chatF 0.3s ease';
+                clearTimeout(chatOverlay._timeout);
+                chatOverlay._timeout = setTimeout(() => { chatOverlay.style.display = 'none'; }, 5000);
+            }, 12000 + Math.random() * 8000);
+            setTimeout(() => { chatOverlay.style.display = 'block'; }, 3000);
+
+            // Cursor trail
+            const trailEmojis = document.body.classList.contains('theme-kitty') ?
+                ['🐱', '🎀', '💖', '🌸', '⭐', '💎', '💗', '✨'] :
+                ['💀', '🤡', '🗑️', '👾', '🎯', '😈', '🔥', '💩'];
+            let trailTimeout = null;
+            document.addEventListener('mousemove', (e) => {
+                if (trailTimeout) return;
+                trailTimeout = setTimeout(() => { trailTimeout = null; }, 60);
+                const emoji = trailEmojis[Math.floor(Math.random() * trailEmojis.length)];
+                const el = document.createElement('div');
+                el.className = 'trail-emoji';
+                el.textContent = emoji;
+                el.style.left = (e.clientX - 16) + 'px';
+                el.style.top = (e.clientY - 16) + 'px';
+                document.body.appendChild(el);
+                setTimeout(() => { if (el.parentNode) el.remove(); }, 800);
+            });
+
+            // Match modal
+            function openMatchDetail(idx) {
+                const match = lastDisplayMatches[idx];
+                if (!match) return;
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay';
+                const p = fp(match, lastName, lastTag);
+                const won = p ? pw(match, p) : false;
+                const { ts, es } = p ? gs(match, p) : { ts: 0, es: 0 };
+                const map = match.metadata?.map?.name || 'Unknown';
+                const time = match.metadata?.game_start ? fta(new Date(match.metadata.game_start * 1000)) : '?';
+                const all = match.players?.all_players || match.players || [];
+                const myTeam = all.filter(x => x.team === p?.team);
+                const enemyTeam = all.filter(x => x.team !== p?.team);
+                const myRows = myTeam.map(x => {
+                    const isYou = (x.gameName || x.name || '').toLowerCase() === lastName.toLowerCase() &&
+                        (x.tag || x.tagLine || '').toLowerCase() === lastTag.toLowerCase();
+                    return { ...x, isYou };
+                }).sort((a, b) => (b.stats?.score || 0) - (a.stats?.score || 0));
+                const enemyRows = enemyTeam.map(x => ({ ...x, isYou: false })).sort((a, b) => (b.stats?.score || 0) - (a
+                    .stats?.score || 0));
+
+                const renderTable = (rows) => {
+                    if (!rows.length) return '<p style="color:#888;font-size:12px;padding:8px 0;">No data.</p>';
+                    return `
+                <table class="scoreboard-table">
+                  <thead><tr><th>Player</th><th>K/D/A</th><th>ACS</th><th>HS%</th><th>DMG</th></tr></thead>
+                  <tbody>
+                    ${rows.map(r => {
+                      const k=r.stats?.kills||0,d=r.stats?.deaths||0,a=r.stats?.assists||0;
+                      const score=r.stats?.score||0,rd=match.metadata?.rounds_played||1,acs=Math.round(score/rd);
+                      const hs=r.stats?.headshots||0,bs=r.stats?.bodyshots||0,ls=r.stats?.legshots||0,t=hs+bs+ls,hp=t?Math.round(hs/t*100):0;
+                      const dmg=r.stats?.damage?.dealt||r.stats?.damage_made||0;
+                      const agentImg=sg(r,'assets.agent.small','');
+                      return `<tr class="${r.isYou?'is-you':''}">
+                        <td><div class="sb-player"><div class="sb-agent-icon"><img src="${agentImg}" alt=""></div><span class="sb-player-name" data-suffix="${r.isYou?(document.body.classList.contains('theme-kitty')?'(YOU 🐱)':'(YOU 🤡)'):''}">${r.gameName||r.name||'?'}</span></div></td>
+                        <td>${k}/${d}/${a}</td><td>${acs}</td><td>${hp}%</td><td>${dmg||0}</td>
+                      </tr>`;
+                    }).join('')}
+                  </tbody>
+                </table>
+              `;
+                };
+
+                overlay.innerHTML = `
+              <div class="match-modal">
+                <button class="modal-close">✕</button>
+                <div class="modal-header">
+                  <h2>${ts} - ${es} (${won?'WON':'LOST'})</h2>
+                  <p>${map} · ${time}</p>
+                </div>
+                <div class="modal-stat-strip">
+                  <div class="stat-card"><div class="stat-value">${p?.stats?.kills||0}/${p?.stats?.deaths||0}/${p?.stats?.assists||0}</div><div class="stat-label">K/D/A</div></div>
+                  <div class="stat-card"><div class="stat-value">${p?Math.round((p.stats?.score||0)/(match.metadata?.rounds_played||1)):0}</div><div class="stat-label">ACS</div></div>
+                  <div class="stat-card"><div class="stat-value">${(p?(()=>{const h=p.stats?.headshots||0,b=p.stats?.bodyshots||0,l=p.stats?.legshots||0,t=h+b+l;return t?Math.round(h/t*100):0;})():0)}%</div><div class="stat-label">HS%</div></div>
+                  <div class="stat-card"><div class="stat-value">${won?'W':'L'}</div><div class="stat-label">Result</div></div>
+                </div>
+                <div class="scoreboard-team"><div class="scoreboard-team-label you">YOUR TEAM</div>${renderTable(myRows)}</div>
+                <div class="scoreboard-team"><div class="scoreboard-team-label them">ENEMY TEAM</div>${renderTable(enemyRows)}</div>
+              </div>
+            `;
+                document.body.appendChild(overlay);
+                overlay.querySelector('.modal-close').addEventListener('click', () => overlay.remove());
+                overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+            }
+
+            // Logo clicks
+            let logoClicks = 0;
+            document.getElementById('header').addEventListener('click', () => {
+                logoClicks++;
+                if (logoClicks >= 10) {
+                    logoClicks = 0;
+                    const overlay = document.createElement('div');
+                    overlay.className = 'jumpscare-overlay';
+                    overlay.innerHTML =
+                        `<div class="jumpscare-emoji">🎉</div><div class="jumpscare-text">YOU CLICKED LOGO 10 TIMES</div>`;
+                    document.body.appendChild(overlay);
+                    setTimeout(() => overlay.remove(), 1200);
+                    showRandAch();
+                }
+            });
+
+            // Konami code
+            const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft',
+                'ArrowRight', 'b', 'a'
+            ];
+            let kIdx = 0;
+            window.addEventListener('keydown', (e) => {
+                const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+                if (key === KONAMI[kIdx]) { kIdx++; if (kIdx === KONAMI.length) { kIdx = 0;
+                        const overlay = document.createElement('div');
+                        overlay.className = 'jumpscare-overlay';
+                        overlay.innerHTML =
+                            `<div class="jumpscare-emoji">🎮</div><div class="jumpscare-text">KONAMI CODE ACTIVATED</div>`;
+                        document.body.appendChild(overlay);
+                        setTimeout(() => overlay.remove(), 1500);
+                        showRandAch(); } } else { kIdx = (key === KONAMI[0]) ? 1 : 0; }
+            });
+
+            // Auto-fetch if theme already selected (in case of reload)
+            if (document.body.classList.contains('theme-kitty') || document.getElementById('sigmaBg').classList.contains(
+                    'active')) {
+                setTimeout(fetchData, 500);
+            }
+
+        })();
+    </script>
+</body>
+</html>
